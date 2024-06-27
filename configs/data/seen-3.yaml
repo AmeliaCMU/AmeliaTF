@@ -1,0 +1,8 @@
+defaults:
+  - default.yaml
+  
+extra_params:
+  data_prep:
+    exp_suffix: seen3_context-${data.dataset.config.add_context}
+    seen_airports: [kbos, kewr, kmdw]
+    unseen_airports: [klax, kdca, ksea, kmsy, kjfk, ksfo, panc]

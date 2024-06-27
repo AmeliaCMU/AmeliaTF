@@ -1,0 +1,4 @@
+# https://lightning.ai/docs/pytorch/stable/api/pytorch_lightning.callbacks.LearningRateMonitor.html
+lr_monitor:
+  _target_: lightning.pytorch.callbacks.LearningRateMonitor
+  logging_interval: "epoch"

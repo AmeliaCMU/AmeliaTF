@@ -1,0 +1,28 @@
+# path to root directory
+# this requires PROJECT_ROOT environment variable to exist
+# you can replace it with "." if you want the root to be the current working directory
+root_dir: ${oc.env:PROJECT_ROOT}
+
+base_dir: ./datasets/amelia
+
+# data paths. we asssume data is organized into subfolders, where each subfolder corresponds to 
+# a particular airport.  
+traj_data_version: a10v07
+traj_data_dir:  ${paths.base_dir}/traj_data_${paths.traj_data_version}
+in_data_dir: ${paths.traj_data_dir}/raw_trajectories/
+out_data_dir: ${paths.traj_data_dir}/proc_trajectories/
+context_version: a10v01os
+context_dir: ${paths.base_dir}/graph_data_${paths.context_version}/
+assets_dir: ${paths.base_dir}/assets/
+
+out_dir: ${paths.root_dir}/out
+log_dir: ${paths.out_dir}/logs/
+vis_dir: ${paths.out_dir}/vis/
+
+# path to output directory, created dynamically by hydra
+# path generation pattern is specified in `configs/hydra/default.yaml`
+# use it to store all files generated during the run, like ckpts and metrics
+output_dir: ${hydra:runtime.output_dir}
+
+# path to working directory
+work_dir: ${hydra:runtime.cwd}
