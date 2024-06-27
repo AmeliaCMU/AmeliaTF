@@ -1,0 +1,5 @@
+defaults:
+  - default.yaml
+
+out_dir: ${paths.root_dir}/out_v7
+traj_data_version: a10v07
