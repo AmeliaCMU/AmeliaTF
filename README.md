@@ -9,6 +9,10 @@ Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and 
 
 *Equal contribution 
 
+<p align="center">
+  <img width="1000" src="./assets/ksfo_results.gif" alt="Amelia">
+</p>
+
 ## Overview
 
 **Amelia-TF** is a large transformer-based trajectory forecasting model that aims to characterize relevant **airport surface movement** operations from the [Amelia-48](https://ameliacmu.github.io/amelia-dataset/) dataset.
