@@ -12,6 +12,7 @@ setup(
         "hydra-core",
         "hydra_colorlog",
         "wandb==0.15.11",
+
         "pyrootutils==1.0.4",
         "rich==13.7.1",
         "opencv-python==4.7.0.72,<4.8",
@@ -22,7 +23,9 @@ setup(
         'scipy==1.9.1',
         'pyproj==3.6.1',
         'geographiclib==2.0',
-        "pandas==2.0.3"
+        "pandas==2.0.3",
+        'geographiclib==2.0'
+
     ],
     packages=find_packages(),
     # use this to customize global commands available in the terminal after installing the package
