@@ -22,7 +22,9 @@ setup(
         'scipy==1.9.1',
         'pyproj==3.6.1',
         'geographiclib==2.0',
-        "pandas==2.0.3"
+        "pandas==2.0.3",
+        'geographiclib==2.0'
+
     ],
     packages=find_packages(),
     # use this to customize global commands available in the terminal after installing the package

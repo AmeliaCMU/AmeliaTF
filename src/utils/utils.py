@@ -181,8 +181,7 @@ def plot_scene_batch(
             scene['num_agents'],   # B
             scene['ego_agent_id'],  # B
             scene['agent_types'].numpy().reshape(B, num_agents),  # B
-            scene['agents_in_scene'].numpy().astype(
-                int).reshape(B, k_agents).tolist(),
+            scene['agents_in_scene'].numpy().astype(int).reshape(B, k_agents).tolist(),
             scene['airport_id'],   # B
             scene['scenario_id']   # B
         )
@@ -230,16 +229,14 @@ def plot_scene_batch(
         maps = (rasters[airport].copy(), agents)
         # Read sequences from batch
         gt_abs_traj = sequences[:num_agents]  # N, T, D
-        gt_history, gt_future = gt_abs_traj[:,
-                                            :hist_len, :], gt_abs_traj[:, hist_len:, :]
+        gt_history, gt_future = gt_abs_traj[:, :hist_len, :], gt_abs_traj[:, hist_len:, :]
         mu, sigma = mu[:num_agents, ..., :dim], sigma[:num_agents, ..., :dim]
         scores = scores[:num_agents]
 
         # Transform relative XY prediction to absolute LL space
-        ll_pred, sigma_p, sigma_n = torch.zeros_like(
-            mu), torch.zeros_like(mu), torch.zeros_like(mu)
-        start_abs = gt_abs_traj[ego_id, hist_len -
-                                1, G.XY].detach().cpu().numpy()
+
+        ll_pred, sigma_p, sigma_n = torch.zeros_like(mu), torch.zeros_like(mu), torch.zeros_like(mu)
+        start_abs = gt_abs_traj[ego_id, hist_len - 1, G.XY].detach().cpu().numpy()
         start_heading = gt_abs_traj[ego_id,
                                     hist_len-1, G.HD].detach().cpu().numpy()
         ref = ref_ll[airport]
@@ -272,35 +269,3 @@ def plot_scene_batch(
             )
         else:
             raise NotImplementedError(f"Propagation: {propagation}")
-
-
-def load_assets(map_dir: str) -> Tuple:
-    raster_map_filepath = os.path.join(map_dir, "bkg_map.png")
-    raster_map = cv2.imread(raster_map_filepath)
-    raster_map = cv2.resize(
-        raster_map, (raster_map.shape[0]//2, raster_map.shape[1]//2))
-    raster_map = cv2.cvtColor(raster_map, cv2.COLOR_BGR2RGB)
-
-    pickle_map_filepath = os.path.join(map_dir, "semantic_graph.pkl")
-    with open(pickle_map_filepath, 'rb') as f:
-        graph_pickle = pickle.load(f)
-        hold_lines = graph_pickle['hold_lines']
-        graph_nx = graph_pickle['graph_networkx']
-        # pickle_map = temp_dict['map_infos']['all_polylines'][:]
-
-    limits_filepath = os.path.join(map_dir, 'limits.json')
-    with open(limits_filepath, 'r') as fp:
-        ref_data = EasyDict(json.load(fp))
-    limits = (ref_data.north, ref_data.east, ref_data.south, ref_data.west)
-
-    aircraft_filepath = os.path.join(map_dir, "ac.png")
-    aircraft = imageio.imread(aircraft_filepath)
-
-    vehicle_filepath = os.path.join(map_dir, "vc.png")
-    vehicle = imageio.imread(vehicle_filepath)
-
-    uk_filepath = os.path.join(map_dir, "uk.png")
-    unknown = imageio.imread(uk_filepath)
-
-    agents = {AIRCRAFT: aircraft, VEHICLE: vehicle, UNKNOWN: unknown}
-    return raster_map, hold_lines, graph_nx, limits, agents

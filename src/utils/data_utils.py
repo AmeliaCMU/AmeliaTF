@@ -279,13 +279,10 @@ def compute_local_context_from_ego_agent(
     adjacency_list = []
     for n in range(num_agents):
         # Get the agent trajectory in Latitude/Longitude and then convert it to image coordinates
-        x, y = rel_sequences[n, current_time_step,
-                             0], rel_sequences[n, current_time_step, 1]
+        x, y = rel_sequences[n, current_time_step, 0], rel_sequences[n, current_time_step, 1]
         local_context = extract_closest_points_from_query(
             points=tf_global_context, query_point=[x, y], k_closest=num_local_points)
-        adjacency = compute_adjacency(
-            local_context, adj_type='fully_connected')
-
+        adjacency = compute_adjacency(local_context, adj_type='fully_connected')
         local_context_list.append(local_context)
         adjacency_list.append(adjacency)
 
@@ -293,8 +290,7 @@ def compute_local_context_from_ego_agent(
         ego_id = kwargs.get('ego_id')
         limits = kwargs.get('limits')
         assert not ego_id is None and not limits is None
-        debug_plot(ego_id, rel_sequences, tf_global_context,
-                   local_context_list, limits)
+        debug_plot(ego_id, rel_sequences, tf_global_context, local_context_list, limits)
 
     return np.asarray(local_context_list), np.asarray(adjacency_list)
 

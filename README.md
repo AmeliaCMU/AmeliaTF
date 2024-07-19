@@ -9,6 +9,7 @@ Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and 
 
 *Equal contribution
 
+
 <p align="center">
   <img width="1000" src="./assets/ksfo_results.gif" alt="Amelia">
 </p>
@@ -18,8 +19,9 @@ Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and 
 **Amelia-TF** is a large transformer-based trajectory forecasting model that aims to characterize relevant **airport surface movement** operations from the [Amelia-48](https://ameliacmu.github.io/amelia-dataset/) dataset.
 
 To do so, our model comprises three main submodules:
+
 1. A **scene representation** module that determines the agents of interest in the scene using a scoring strategy, and encodes per-agent features,
-1. A transformer-based **scene encoder**, which hierarchically encodes the temporal, agent-to-agent and agent-to-context relationships within a scene, and;
+2. A transformer-based **scene encoder**, which hierarchically encodes the temporal, agent-to-agent and agent-to-context relationships within a scene, and;
 3. A **trajectory decoder** that models the set of possible futures with associated confidence scores using a Gaussian Mixture Model.
 
 <p align="center">
@@ -69,10 +71,10 @@ ln -s /path/to/the/amelia/dataset .
 
 Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/README.md).
 
-
 ### Additional Notes
 
 Our repository's structure is based on this [template](https://github.com/ashleve/lightning-hydra-template), which uses Hydra and Pytorch Lightning. We recommend going through their [README](https://github.com/ashleve/lightning-hydra-template?tab=readme-ov-file#your-superpowers) for further details into the code's functionalities.
+
 
 ## How to use
 
@@ -90,6 +92,7 @@ The general format for running a training experiment is:
 cd src
 python train.py data=[data_config] model=[model_config] trainer=[trainer_config]
 ```
+
 where:
 
 - ```[data_config]```, represents a dataset configuration specified under ```/AmeliaTF/configs/data```
@@ -153,12 +156,14 @@ The model configuration used for all of these experiments was also `marginal.yam
 #### Other Experiments
 
 - We trained our models under a **marginal** prediction setting, but we have support for training models on a **joint** prediction setting. To change the prediction paradigm, change the model parameter to `joint`. For example:
+
 ```bash
 cd Amelia-TF
 python train.py data=seen-all model=joint trainer=gpu
 ```
 
 - Our model can be trained with and without context (maps). To train the trajectory-only model, use either `marginal_traj` or `joint_traj` configurations. For example,
+
 ```bash
 cd Amelia-TF
 python train.py data=seen-all model=marginal_traj trainer=gpu
@@ -173,7 +178,6 @@ For running distributed training on systems with 4090 it may be possible that th
 ```bash
 export NCCL_P2P_DISABLE=1
 ```
-
 
 ## BibTeX
 
