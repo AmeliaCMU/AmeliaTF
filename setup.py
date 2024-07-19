@@ -7,7 +7,7 @@ setup(
     author="",
     author_email="",
     url="https://github.com/user/project",
-    install_requires=[  # missing amelia_scenes and apt install util-linux
+    install_requires=[  # missing amelia_scenes
         "lightning",
         "hydra-core",
         "hydra_colorlog",
