@@ -9,11 +9,7 @@ from easydict import EasyDict
 from math import floor
 from typing import Tuple, List
 
-# import amelia.scenes.utils.individual_metrics as indm
-# import amelia.scenes.utils.interaction_metrics as intm
-# import amelia.scenes.utils.scores as S
-
-from amelia.viz.context import debug_plot
+from amelia_scenes.visualization.context import debug_plot
 # from amelia_scenes.scene_utils.common import Status as s
 from src.utils.transform_utils import transform_points_2d
 

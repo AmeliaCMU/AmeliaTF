@@ -7,7 +7,7 @@ import torch
 
 import src.utils.data_utils as D
 import src.utils.transform_utils as T
-import amelia.scenes.utils.global_masks as G
+import amelia_scenes.utils.global_masks as G
 
 from easydict import EasyDict
 from math import radians, sin, cos

@@ -7,7 +7,7 @@ import pickle
 import random
 import torch
 
-import amelia.scenes.utils.common as C
+import amelia_scenes.utils.common as C
 import src.utils.global_masks as G
 
 from easydict import EasyDict

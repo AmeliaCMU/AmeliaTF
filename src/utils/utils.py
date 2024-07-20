@@ -8,8 +8,8 @@ import random
 import torch
 import warnings
 
-import amelia.viz.common as C
-import amelia.viz.marginal_predictions as M
+import amelia_scenes.visualization.common as C
+import amelia_scenes.visualization.marginal_predictions as M
 
 from easydict import EasyDict
 from importlib.util import find_spec
