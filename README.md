@@ -4,10 +4,11 @@ This repository contains the model implementation, as well as the training and e
 
 ### Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](todo)]
 
-[Ingrid Navarro](https://navars.xyz) *, [Pablo Ortega-Kral](https://paok-2001.github.io) *, [Jay Patrikar](https://www.jaypatrikar.me) *, Haichuan Wang, 
-Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and [Sebastian Scherer](https://theairlab.org/team/sebastian/) 
+[Ingrid Navarro](https://navars.xyz) *, [Pablo Ortega-Kral](https://paok-2001.github.io) *, [Jay Patrikar](https://www.jaypatrikar.me) *, Haichuan Wang,
+Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and [Sebastian Scherer](https://theairlab.org/team/sebastian/)
 
-*Equal contribution 
+*Equal contribution
+
 
 <p align="center">
   <img width="1000" src="./assets/ksfo_results.gif" alt="Amelia">
@@ -18,8 +19,9 @@ Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and 
 **Amelia-TF** is a large transformer-based trajectory forecasting model that aims to characterize relevant **airport surface movement** operations from the [Amelia-48](https://ameliacmu.github.io/amelia-dataset/) dataset.
 
 To do so, our model comprises three main submodules:
+
 1. A **scene representation** module that determines the agents of interest in the scene using a scoring strategy, and encodes per-agent features,
-1. A transformer-based **scene encoder**, which hierarchically encodes the temporal, agent-to-agent and agent-to-context relationships within a scene, and;
+2. A transformer-based **scene encoder**, which hierarchically encodes the temporal, agent-to-agent and agent-to-context relationships within a scene, and;
 3. A **trajectory decoder** that models the set of possible futures with associated confidence scores using a Gaussian Mixture Model.
 
 <p align="center">
@@ -32,9 +34,9 @@ We explore different scene representation and training experiments for our model
 
 ### Installation
 
-#### Basic Setup 
+#### Basic Setup
 
-First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/INSTALL.md). 
+First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/INSTALL.md).
 
 Then, install **Amelia-TF**: Activate the environment created during the **Amelia-Scenes** setup:
 
@@ -52,7 +54,7 @@ pip install -e .
 
 #### Full Setup
 
-If you're interested in using all of our [tools](https://ameliacmu.github.io/amelia-dataset/), you can install our framework through this [script](https://github.com/AmeliaCMU/AmeliaScenes/install.sh). 
+If you're interested in using all of our [tools](https://ameliacmu.github.io/amelia-dataset/), you can install our framework through this [script](https://github.com/AmeliaCMU/AmeliaScenes/install.sh).
 
 ### Dataset
 
@@ -67,12 +69,12 @@ ln -s /path/to/the/amelia/dataset .
 
 ### Scenario Pre-processing
 
-Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/README.md). 
-
+Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/README.md).
 
 ### Additional Notes
 
-Our repository's structure is based on this [template](https://github.com/ashleve/lightning-hydra-template), which uses Hydra and Pytorch Lightning. We recommend going through their [README](https://github.com/ashleve/lightning-hydra-template?tab=readme-ov-file#your-superpowers) for further details into the code's functionalities. 
+Our repository's structure is based on this [template](https://github.com/ashleve/lightning-hydra-template), which uses Hydra and Pytorch Lightning. We recommend going through their [README](https://github.com/ashleve/lightning-hydra-template?tab=readme-ov-file#your-superpowers) for further details into the code's functionalities.
+
 
 ## How to use
 
@@ -90,6 +92,7 @@ The general format for running a training experiment is:
 cd src
 python train.py data=[data_config] model=[model_config] trainer=[trainer_config]
 ```
+
 where:
 
 - ```[data_config]```, represents a dataset configuration specified under ```/AmeliaTF/configs/data```
@@ -111,14 +114,14 @@ If you already have a pre-trained checkpoint you can run evaluation only using `
 cd Amelia-TF
 python eval.py data=seen-all model=marginal trainer=gpu ckpt_path=/path/to/pretrained/weights.ckpt
 ```
- 
+
 ### Our experiments
 
-We provide the configuration combination to run our experiments, as well as our pre-trained weights. 
+We provide the configuration combination to run our experiments, as well as our pre-trained weights.
 
 #### Single-Airport Experiments (Table 5 in our paper)
 
-The model configuration used for all of these experiments was ```marginal.yaml```. 
+The model configuration used for all of these experiments was ```marginal.yaml```.
 
 |Airport | Airport ICAO | Data Config  | ADE@20 | FDE@20 | ADE@50 | FDE@50 | Weights |
 | :-----: | :-----: | :----------: | :----: | :----: | :----: | :----: | :-----: |
@@ -137,7 +140,7 @@ The model configuration used for all of these experiments was ```marginal.yaml``
 
 #### Multi-Airport Experiments (Table 6 in our paper)
 
-The model configuration used for all of these experiments was also `marginal.yaml`. 
+The model configuration used for all of these experiments was also `marginal.yaml`.
 
 |Seen Airport(s) | Unseen Airport(s) | Data Config  | Avg. ADE@20 | Avg. FDE@20 | Avg. ADE@50 | Avg. FDE@50 | Weights |
 | :-----: | :-----: | :----------: | :----: | :----: | :----: | :----: | :-----: |
@@ -150,15 +153,17 @@ The model configuration used for all of these experiments was also `marginal.yam
 
 <hr>
 
-#### Other Experiments 
+#### Other Experiments
 
 - We trained our models under a **marginal** prediction setting, but we have support for training models on a **joint** prediction setting. To change the prediction paradigm, change the model parameter to `joint`. For example:
+
 ```bash
 cd Amelia-TF
 python train.py data=seen-all model=joint trainer=gpu
 ```
 
-- Our model can be trained with and without context (maps). To train the trajectory-only model, use either `marginal_traj` or `joint_traj` configurations. For example,  
+- Our model can be trained with and without context (maps). To train the trajectory-only model, use either `marginal_traj` or `joint_traj` configurations. For example,
+
 ```bash
 cd Amelia-TF
 python train.py data=seen-all model=marginal_traj trainer=gpu
@@ -173,7 +178,6 @@ For running distributed training on systems with 4090 it may be possible that th
 ```bash
 export NCCL_P2P_DISABLE=1
 ```
-
 
 ## BibTeX
 

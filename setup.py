@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="src",
-    version="0.0.1",
-    description="Describe Your Cool Project",
+    name="amelia_tf",
+    version="1.0.0",
+    description="Amelia TF is a large transformer-based trjectory forecasting model",
     author="",
     author_email="",
     url="https://github.com/user/project",
@@ -12,7 +12,6 @@ setup(
         "hydra-core",
         "hydra_colorlog",
         "wandb==0.15.11",
-
         "pyrootutils==1.0.4",
         "rich==13.7.1",
         "opencv-python==4.7.0.72,<4.8",

@@ -8,8 +8,8 @@ import random
 import torch
 import warnings
 
-import amelia.viz.common as C
-import amelia.viz.marginal_predictions as M
+import amelia_scenes.visualization.common as C
+import amelia_scenes.visualization.marginal_predictions as M
 
 from easydict import EasyDict
 from importlib.util import find_spec
@@ -234,6 +234,7 @@ def plot_scene_batch(
         scores = scores[:num_agents]
 
         # Transform relative XY prediction to absolute LL space
+
         ll_pred, sigma_p, sigma_n = torch.zeros_like(mu), torch.zeros_like(mu), torch.zeros_like(mu)
         start_abs = gt_abs_traj[ego_id, hist_len - 1, G.XY].detach().cpu().numpy()
         start_heading = gt_abs_traj[ego_id,
@@ -268,35 +269,3 @@ def plot_scene_batch(
             )
         else:
             raise NotImplementedError(f"Propagation: {propagation}")
-
-
-def load_assets(map_dir: str) -> Tuple:
-    raster_map_filepath = os.path.join(map_dir, "bkg_map.png")
-    raster_map = cv2.imread(raster_map_filepath)
-    raster_map = cv2.resize(
-        raster_map, (raster_map.shape[0]//2, raster_map.shape[1]//2))
-    raster_map = cv2.cvtColor(raster_map, cv2.COLOR_BGR2RGB)
-
-    pickle_map_filepath = os.path.join(map_dir, "semantic_graph.pkl")
-    with open(pickle_map_filepath, 'rb') as f:
-        graph_pickle = pickle.load(f)
-        hold_lines = graph_pickle['hold_lines']
-        graph_nx = graph_pickle['graph_networkx']
-        # pickle_map = temp_dict['map_infos']['all_polylines'][:]
-
-    limits_filepath = os.path.join(map_dir, 'limits.json')
-    with open(limits_filepath, 'r') as fp:
-        ref_data = EasyDict(json.load(fp))
-    limits = (ref_data.north, ref_data.east, ref_data.south, ref_data.west)
-
-    aircraft_filepath = os.path.join(map_dir, "ac.png")
-    aircraft = imageio.imread(aircraft_filepath)
-
-    vehicle_filepath = os.path.join(map_dir, "vc.png")
-    vehicle = imageio.imread(vehicle_filepath)
-
-    uk_filepath = os.path.join(map_dir, "uk.png")
-    unknown = imageio.imread(uk_filepath)
-
-    agents = {AIRCRAFT: aircraft, VEHICLE: vehicle, UNKNOWN: unknown}
-    return raster_map, hold_lines, graph_nx, limits, agents

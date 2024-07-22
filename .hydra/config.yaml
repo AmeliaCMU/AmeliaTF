@@ -1,6 +1,6 @@
 task_name: train
 tags:
-- dev
+  - dev
 train: true
 test: true
 compile: false
@@ -12,7 +12,6 @@ data:
     _target_: src.data.components.swim_dataset.SWIMDataset
     config:
       in_data_dir: ${paths.in_data_dir}
-      out_data_dir: ${paths.out_data_dir}
       context_dir: ${paths.context_dir}
       split: null
       traj_len: 60
@@ -37,16 +36,16 @@ data:
     data_prep:
       in_data_dir: ${paths.in_data_dir}
       train_airports:
-      - ksea
-      - kewr
-      - kbos
-      - kmdw
+        - ksea
+        - kewr
+        - kbos
+        - kmdw
       test_airports: []
       to_process: 1.0
       train_val_test_split:
-      - 0.7
-      - 0.1
-      - 0.2
+        - 0.7
+        - 0.1
+        - 0.2
       test_split: 0.2
 model:
   _target_: src.models.trajpred.TrajPred
@@ -158,10 +157,10 @@ logger:
     anonymous: null
     project: boeing_swim
     log_model: false
-    prefix: ''
+    prefix: ""
     group: init
     tags:
-    - dev
+      - dev
     job_type: testing
 trainer:
   _target_: lightning.pytorch.trainer.Trainer
@@ -180,7 +179,6 @@ paths:
   root_dir: ${oc.env:PROJECT_ROOT}
   base_dir: datasets/swim
   in_data_dir: ${paths.base_dir}/raw_trajectories/
-  out_data_dir: ${paths.base_dir}/proc_trajectories/
   context_dir: ${paths.base_dir}/maps
   results_meta_path: ./out/results_meta/
   log_dir: ${paths.root_dir}/logs/

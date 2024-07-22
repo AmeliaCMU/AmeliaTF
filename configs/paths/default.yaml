@@ -5,12 +5,14 @@ root_dir: ${oc.env:PROJECT_ROOT}
 
 base_dir: ./datasets/amelia
 
-# data paths. we asssume data is organized into subfolders, where each subfolder corresponds to 
-# a particular airport.  
+# data paths. we asssume data is organized into subfolders, where each subfolder corresponds to
+# a particular airport.
 traj_data_version: a10v07
-traj_data_dir:  ${paths.base_dir}/traj_data_${paths.traj_data_version}
+traj_data_dir: ${paths.base_dir}/traj_data_${paths.traj_data_version}
 in_data_dir: ${paths.traj_data_dir}/raw_trajectories/
-out_data_dir: ${paths.traj_data_dir}/proc_trajectories/
+
+scenes_dir: ${paths.traj_data_dir}/proc_full_scenes/
+
 context_version: a10v01os
 context_dir: ${paths.base_dir}/graph_data_${paths.context_version}/
 assets_dir: ${paths.base_dir}/assets/

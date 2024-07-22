@@ -9,17 +9,27 @@ from easydict import EasyDict
 from math import floor
 from typing import Tuple, List
 
-# import amelia.scenes.utils.individual_metrics as indm
-# import amelia.scenes.utils.interaction_metrics as intm
-# import amelia.scenes.utils.scores as S
-
-from amelia.viz.context import debug_plot
+from amelia_scenes.visualization.context import debug_plot
 # from amelia_scenes.scene_utils.common import Status as s
 from src.utils.transform_utils import transform_points_2d
 
 # TODO: figure out with the seeds from config are not working.
 np.set_printoptions(suppress=True)
 pd.options.mode.chained_assignment = None
+
+
+def get_filtered_list(airport, base_dir, file_list, min_agents, max_agents):
+    data_dirs = [os.path.join(base_dir, f) for f in file_list if airport in f]
+    data_files = [os.path.join(dir_, f)
+                  for dir_ in data_dirs for f in os.listdir(dir_)]
+    # Each pickle file has a number at the end indicating the number of agents in the scenario.
+    # Here, just return the files inside the min/max agent range.
+    data_files = [f for f in data_files
+                  if int(f.split('/')[-1].split('.')[0].split('-')[-1]) >= min_agents and
+                  int(f.split('/')[-1].split('.')
+                      [0].split('-')[-1]) <= max_agents
+                  ]
+    return data_files
 
 
 def load_blacklist(data_prep: EasyDict, airport_list: list):
@@ -36,7 +46,8 @@ def load_blacklist(data_prep: EasyDict, airport_list: list):
     os.makedirs(blacklist_dir, exist_ok=True)
     blacklist = {}
     for airport in airport_list:
-        blackist_file = os.path.join(blacklist_dir, f"{airport}_{data_prep.split_type}.txt")
+        blackist_file = os.path.join(
+            blacklist_dir, f"{airport}_{data_prep.split_type}.txt")
         blacklist[airport] = []
         if os.path.exists(blackist_file):
             with open(blackist_file, 'r') as f:
@@ -71,287 +82,6 @@ def get_airport_files(airport: str, data_prep: dict):
     random.seed(data_prep.seed)
     random.shuffle(airport_files)
     return airport_files
-
-
-def create_random_splits(data_prep: EasyDict, airport_list: list):
-    """ Splits the data by month. If no `test_airports` are specified, then it will iterate over all
-    `train_airports` and create a train-val-test split for each, by keeping floor(75%) of the files
-    into the train-val and the remaining floor(25%) into the test set. Files are randomly selected.
-
-    Inputs
-    ------
-        data_prep[dict]: dictionary containing data preparation parameters.
-        airport_list[list]: list of all supported airports in IATA code
-    """
-    n_train, n_val, n_test = data_prep.random_splits.train_val_test
-    for split in ['train', 'val', 'test']:
-        split_dir = os.path.join(data_prep.in_data_dir, f"{split}_splits")
-        os.makedirs(split_dir, exist_ok=True)
-
-    for airport in airport_list:
-        airport_files = get_airport_files(airport, data_prep)
-
-        N_train = floor(len(airport_files) * n_train)
-        N_val = floor(len(airport_files) * n_val)
-
-        filename = f"{airport}_{data_prep.split_type}"
-
-        # Write the out the splits
-        train_list = airport_files[:N_train]
-        with open(f"{data_prep.in_data_dir}/train_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(train_list))
-
-        val_list = airport_files[N_train:N_train+N_val]
-        with open(f"{data_prep.in_data_dir}/val_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(val_list))
-
-        test_list = airport_files[N_train+N_val:]
-        with open(f"{data_prep.in_data_dir}/test_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(test_list))
-
-
-def create_day_splits(data_prep: dict, airport_list: list):
-    """ Splits the data by month. If no `test_airports` are specified, then it will iterate over all
-    `seen_airports` and create a train-val-test split for each, by keeping floor(75%) of the days
-    into the train-val and the remaining floor(25%) into the test set.
-
-    Inputs
-    ------
-        data_prep[dict]: dictionary containing data preparation parameters.
-        airport_list[list]: list of all supported airports in IATA code
-    """
-    n_train, n_val = data_prep.day_splits.train_val
-    train_val_perc = data_prep.day_splits.train_val_perc
-    for split in ['train', 'val', 'test']:
-        split_dir = os.path.join(data_prep.in_data_dir, f"{split}_splits")
-        os.makedirs(split_dir, exist_ok=True)
-
-    for airport in airport_list:
-        # Collect all airport files in current airport and get the unique days for which data was
-        # collected.
-        airport_files = np.asarray(get_airport_files(airport, data_prep))
-        days_per_file = np.asarray([datetime.utcfromtimestamp(
-            int(f.split('/')[-1].split('.')[0].split('_')[-1])).day for f in airport_files])
-        days = np.unique(days_per_file)
-        num_days = days.shape[0]
-
-        np.random.seed(data_prep.seed)
-
-        # Make sure test set does not contain days "seen" during training.
-        train_val_days = np.random.choice(days, size=int(train_val_perc * num_days), replace=False)
-        test_days = list(set(days.tolist()).symmetric_difference(
-            train_val_days.tolist()))
-
-        train_val_idx = np.in1d(days_per_file, train_val_days)
-        train_val_files = airport_files[train_val_idx].tolist()
-
-        filename = f"{airport}_{data_prep.split_type}"
-
-        N_train = floor(len(train_val_files) * n_train)
-        train_list = train_val_files[:N_train]
-        with open(f"{data_prep.in_data_dir}/train_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(train_list))
-
-        val_list = train_val_files[N_train:]
-        with open(f"{data_prep.in_data_dir}/val_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(val_list))
-
-        test_idx = np.in1d(days_per_file, test_days)
-        test_list = airport_files[test_idx].tolist()
-        with open(f"{data_prep.in_data_dir}/test_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(test_list))
-
-
-def create_month_splits(data_prep: dict, airport_list: list):
-    """ Splits the data by month. If no `test_airports` are specified, then it will iterate over all
-    `seen_airports` and create a train-val-test split for each, by keeping floor(75%) of the days
-    into the train-val and the remaining floor(25%) into the test set.
-
-    Inputs
-    ------
-        data_prep[dict]: dictionary containing data preparation parameters.
-        airport_list[list]: list of all supported airports in IATA code
-    """
-    n_train, n_val = data_prep.day_splits.train_val
-    train_val_perc = data_prep.day_splits.train_val_perc
-    for split in ['train', 'val', 'test']:
-        split_dir = os.path.join(data_prep.in_data_dir, f"{split}_splits")
-        os.makedirs(split_dir, exist_ok=True)
-
-    for airport in airport_list:
-        # Collect all airport files in current airport and get the unique days for which data was
-        # collected.
-        airport_files = np.asarray(get_airport_files(airport, data_prep))
-        month_per_file = np.asarray([datetime.utcfromtimestamp(
-            int(f.split('/')[-1].split('.')[0].split('_')[-1])).month for f in airport_files])
-        months = np.unique(month_per_file)
-        num_months = months.shape[0]
-
-        np.random.seed(data_prep.seed)
-
-        # Make sure test set does not contain months "seen" during training.
-        train_val_months = np.random.choice(
-            months, size=int(train_val_perc * num_months), replace=False)
-        test_months = list(set(months.tolist()).symmetric_difference(train_val_months.tolist()))
-
-        train_val_idx = np.in1d(month_per_file, train_val_months)
-        train_val_files = airport_files[train_val_idx].tolist()
-
-        filename = f"{airport}_{data_prep.split_type}"
-
-        N_train = floor(len(train_val_files) * n_train)
-        train_list = train_val_files[:N_train]
-        with open(f"{data_prep.in_data_dir}/train_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(train_list))
-
-        val_list = train_val_files[N_train:]
-        with open(f"{data_prep.in_data_dir}/val_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(val_list))
-
-        test_idx = np.in1d(month_per_file, test_months)
-        test_list = airport_files[test_idx].tolist()
-        with open(f"{data_prep.in_data_dir}/test_splits/{filename}.txt", 'w') as fp:
-            fp.write('\n'.join(test_list))
-
-
-def split_data_by_day(data_prep: dict):
-    """ Splits the data by month. If no `test_airports` are specified, then it will iterate over all
-    `seen_airports` and create a train-val-test split for each, by keeping floor(75%) of the days
-    into the train-val and the remaining floor(25%) into the test set.
-
-    Inputs
-    ------
-        data_prep[dict]: dictionary containing data preparation parameters.
-    """
-    train_list, val_list, test_list = [], [], []
-    n_train, n_val = data_prep.day_splits.train_val
-
-    for airport in data_prep.seen_airports:
-        # Collect all airport files in current airport and get the unique days for which data was
-        # collected.
-        airport_files = np.asarray(get_airport_files(airport, data_prep))
-        days_per_file = np.asarray([datetime.utcfromtimestamp(
-            int(f.split('/')[-1].split('.')[0].split('_')[-1])).day for f in airport_files])
-        days = np.unique(days_per_file)
-        num_days = days.shape[0]
-
-        # TODO: seed globally.
-        np.random.seed(data_prep.seed)
-
-        # Make sure test set does not contain days "seen" during training.
-        train_val_days = np.random.choice(
-            days, size=int(data_prep.day_splits.train_val_perc * num_days), replace=False)
-        test_days = list(set(days.tolist()).symmetric_difference(
-            train_val_days.tolist()))
-
-        train_val_idx = np.in1d(days_per_file, train_val_days)
-        train_val_files = airport_files[train_val_idx].tolist()
-
-        N_train = floor(len(train_val_files) * n_train)
-        train_list += train_val_files[:N_train]
-        val_list += train_val_files[N_train:]
-
-        test_idx = np.in1d(days_per_file, test_days)
-        test_list += airport_files[test_idx].tolist()
-    return train_list, val_list, test_list
-
-
-def split_data_by_month(data_prep: dict):
-    """ Splits the data by month. If no `test_airports` are specified, then it will iterate over all
-    `train_airports` and create a train-val-test split for each, by keeping floor(75%) of the months
-    into the train-val and the remaining floor(25%) into the test set.
-
-    Inputs
-    ------
-        data_prep[dict]: dictionary containing data preparation parameters.
-    """
-    train_list, val_list, test_list = [], [], []
-    n_train, n_val = data_prep.month_splits.train_val
-
-    for airport in data_prep.train_airports:
-        # select the months
-        airport_files = np.asarray(get_airport_files(airport, data_prep))
-        month_per_file = np.asarray([datetime.utcfromtimestamp(
-            int(f.split('/')[-1].split('.')[0].split('_')[-1])).month for f in airport_files])
-        months = np.unique(month_per_file)
-        num_months = months.shape[0]
-
-        train_val_months = np.random.choice(
-            months, size=int(data_prep.month_splits.train_val_perc * num_months), replace=False)
-        test_months = list(set(months.tolist()).symmetric_difference(train_val_months.tolist()))
-
-        train_val_idx = np.in1d(month_per_file, train_val_months)
-        train_val_files = airport_files[train_val_idx].tolist()
-
-        N_train = floor(len(train_val_files) * n_train)
-        train_list += train_val_files[:N_train]
-        val_list += train_val_files[N_train:]
-
-        test_idx = np.in1d(month_per_file, test_months)
-        test_list += airport_files[test_idx].tolist()
-    return train_list, val_list, test_list
-
-
-def split_data_randomly(data_prep):
-    """ Splits the data by month. If no `test_airports` are specified, then it will iterate over all
-    `train_airports` and create a train-val-test split for each, by keeping floor(75%) of the files
-    into the train-val and the remaining floor(25%) into the test set. Files are randomly selected.
-
-    Inputs
-    ------
-        data_prep[dict]: dictionary containing data preparation parameters.
-    """
-    train_list, val_list, test_list = [], [], []
-    n_train, n_val = data_prep.random_splits.train_val
-
-    for airport in data_prep.train_airports:
-        airport_files = get_airport_files(airport)
-
-        N_train = floor(len(airport_files) * n_train)
-        N_val = floor(len(airport_files) * n_val)
-
-        train_list += airport_files[:N_train]
-        val_list += airport_files[N_train:N_train+N_val]
-        test_list += airport_files[N_train+N_val:]
-    return train_list, val_list, test_list
-
-
-def impute(seq: pd.DataFrame, seq_len: int, imputed_flag: float = 1.0) -> pd.DataFrame:
-    """ Imputes missing data via linear interpolation.
-
-    Inputs
-    ------
-        seq[pd.DataFrame]: trajectory sequence to be imputed.
-        seq_len[int]: length of the trajectory sequence.
-
-    Output
-    ------
-        seq[pd.DataFrame]: trajectory sequence after imputation.
-    """
-    # Create a list from starting frame to ending frame in agent sequence
-    conseq_frames = set(range(int(seq[0, 0]), int(seq[-1, 0])+1))
-    # Create a list of the actual frames in the agent sequence. There may be missing data from which
-    # we need to interpolate.
-    actual_frames = set(seq[:, 0])
-    # Compute the difference between the lists. The difference represents the missing data points.
-    missing_frames = list(sorted(conseq_frames - actual_frames))
-    # Insert nan rows where the missing data is. Then, interpolate.
-    if len(missing_frames) > 0:
-        seq = pd.DataFrame(seq)
-        agent_id = seq.loc[0, 1]
-        agent_type = seq.loc[0, 9]
-        for missing_frame in missing_frames:
-            df1 = seq[:missing_frame]
-            df2 = seq[missing_frame:]
-            df1.loc[missing_frame] = [
-                missing_frame, agent_id, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
-                agent_type, imputed_flag, np.nan, np.nan]
-            # df1.loc[missing_frame] = [
-            #     missing_frame, agent_id, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
-            #     agent_type, np.nan, np.nan]
-            seq = pd.concat([df1, df2]).astype(float)
-        seq = seq.interpolate(method='linear').to_numpy()[:seq_len]
-    return seq
 
 
 def merge_seq3d_by_padding(
@@ -416,7 +146,8 @@ def merge_seq2d_by_padding(
     """
     # TODO: debug this function
     assert len(tensor_list[0].shape) == 2
-    max_num_agents = max([x.shape[0] for x in tensor_list]) if max_pad is None else max_pad
+    max_num_agents = max([x.shape[0] for x in tensor_list]
+                         ) if max_pad is None else max_pad
 
     num_agents, timesteps = tensor_list[0].shape
 
@@ -548,7 +279,6 @@ def compute_local_context_from_ego_agent(
         local_context = extract_closest_points_from_query(
             points=tf_global_context, query_point=[x, y], k_closest=num_local_points)
         adjacency = compute_adjacency(local_context, adj_type='fully_connected')
-
         local_context_list.append(local_context)
         adjacency_list.append(adjacency)
 
