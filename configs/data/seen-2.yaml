@@ -1,6 +1,10 @@
 defaults:
   - default.yaml
-  
+
+dataset:
+  config:
+    sampling_strategy: critical
+
 extra_params:
   data_prep:
     exp_suffix: seen2_context-${data.dataset.config.add_context}

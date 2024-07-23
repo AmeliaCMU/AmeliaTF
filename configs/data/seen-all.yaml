@@ -1,2 +1,6 @@
 defaults:
   - default.yaml
+
+dataset:
+  config:
+    sampling_strategy: critical

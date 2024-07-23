@@ -1,13 +1,31 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="src",
-    version="0.0.1",
-    description="Describe Your Cool Project",
+    name="amelia_tf",
+    version="1.0.0",
+    description="Amelia TF is a large transformer-based trjectory forecasting model",
     author="",
     author_email="",
     url="https://github.com/user/project",
-    install_requires=["lightning", "hydra-core"],
+    install_requires=[  # missing amelia_scenes
+        "lightning",
+        "hydra-core",
+        "hydra_colorlog",
+        "wandb==0.15.11",
+        "pyrootutils==1.0.4",
+        "rich==13.7.1",
+        "opencv-python==4.7.0.72,<4.8",
+        'numpy==1.21.2,<2',
+        'imageio==2.34.0,<3',
+        'easydict==1.10',
+        'matplotlib==3.7.1',
+        'scipy==1.9.1',
+        'pyproj==3.6.1',
+        'geographiclib==2.0',
+        "pandas==2.0.3",
+        'geographiclib==2.0'
+
+    ],
     packages=find_packages(),
     # use this to customize global commands available in the terminal after installing the package
     entry_points={
