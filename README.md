@@ -1,4 +1,4 @@
-# Amelia-TF
+# AmeliaTF
 
 This repository contains the model implementation, as well as the training and evaluation code of our paper:
 
@@ -9,14 +9,13 @@ Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and 
 
 *Equal contribution
 
-
 <p align="center">
   <img width="1000" src="./assets/ksfo_results.gif" alt="Amelia">
 </p>
 
 ## Overview
 
-**Amelia-TF** is a large transformer-based trajectory forecasting model that aims to characterize relevant **airport surface movement** operations from the [Amelia-48](https://ameliacmu.github.io/amelia-dataset/) dataset.
+**AmeliaTF** is a large transformer-based trajectory forecasting model that aims to characterize relevant **airport surface movement** operations from the [Amelia-48](https://ameliacmu.github.io/amelia-dataset/) dataset.
 
 To do so, our model comprises three main submodules:
 
@@ -38,7 +37,7 @@ We explore different scene representation and training experiments for our model
 
 First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/INSTALL.md).
 
-Then, install **Amelia-TF**: Activate the environment created during the **Amelia-Scenes** setup:
+Then, install **AmeliaTF**: Activate the environment created during the **Amelia-Scenes** setup:
 
 ```bash
 conda activate amelia
@@ -63,7 +62,7 @@ To run this repository, you first need to download the amelia dataset. Follow th
 Once downloaded, create a symbolic link into  ```datasets```:
 
 ```bash
-cd Amelia-TF/datasets
+cd datasets
 ln -s /path/to/the/amelia/dataset .
 ```
 
@@ -74,7 +73,6 @@ Once you've downloaded the dataset and installed the required modules. You need 
 ### Additional Notes
 
 Our repository's structure is based on this [template](https://github.com/ashleve/lightning-hydra-template), which uses Hydra and Pytorch Lightning. We recommend going through their [README](https://github.com/ashleve/lightning-hydra-template?tab=readme-ov-file#your-superpowers) for further details into the code's functionalities.
-
 
 ## How to use
 
@@ -89,31 +87,28 @@ conda activate amelia
 The general format for running a training experiment is:
 
 ```bash
-cd src
-python train.py data=[data_config] model=[model_config] trainer=[trainer_config]
+python src/train.py data=[data_config] model=[model_config] trainer=[trainer_config]
 ```
 
 where:
 
-- ```[data_config]```, represents a dataset configuration specified under ```/AmeliaTF/configs/data```
-- ```[model_config]```, represents a model configuration specified under ```/AmeliaTF/configs/model```
-- ```[trainer_config]```, represents the trainer to be used, (e.g., CPU, GPU, DDP, etc), specified under ```/AmeliaTF/configs/trainer```
+- ```[data_config]```, represents a dataset configuration specified under ```./configs/data```
+- ```[model_config]```, represents a model configuration specified under ```./configs/model```
+- ```[trainer_config]```, represents the trainer to be used, (e.g., CPU, GPU, DDP, etc), specified under ```./configs/trainer```
 
 For example, to train our model on GPU using all of our currently supported airports, you would run:
 
 ```bash
-cd Amelia-TF
-python train.py data=seen-all model=marginal trainer=gpu
+python src/train.py data=seen-all model=marginal trainer=gpu
 ```
 
 ### Evaluating a Model
 
-If you already have a pre-trained checkpoint you can run evaluation only using ```eval.py``` and following a similar format as above. However, you need to provide the path to the pre-trained weights. For example,
+If you already have a pre-trained checkpoint you can run evaluation only using `eval.py` and following a similar format as above. However, you need to provide the path to the pre-trained weights. For example,
 
-```bash
-cd Amelia-TF
-python eval.py data=seen-all model=marginal trainer=gpu ckpt_path=/path/to/pretrained/weights.ckpt
-```
+`bash
+python src/eval.py data=seen-all model=marginal trainer=gpu ckpt_path=/path/to/pretrained/weights.ckpt
+`
 
 ### Our experiments
 
@@ -121,35 +116,35 @@ We provide the configuration combination to run our experiments, as well as our 
 
 #### Single-Airport Experiments (Table 5 in our paper)
 
-The model configuration used for all of these experiments was ```marginal.yaml```.
+The model configuration used for all of these experiments was `marginal.yaml`.
 
-|Airport | Airport ICAO | Data Config  | ADE@20 | FDE@20 | ADE@50 | FDE@50 | Weights |
-| :-----: | :-----: | :----------: | :----: | :----: | :----: | :----: | :-----: |
-| Boston-Logan Intl. Airport | KBOS | `kbos.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [kbos]() |
-| Ronald Reagan Washington Natl. Airport | KDCA | `kdca.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [kdca]() |
-| Newark Liberty Intl. Airport | KEWR | `kewr.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [kewr]() |
-| John F. Kennedy Intl. Airport | KJFK | `kjfk.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [kjfk]() |
-| Los Angeles Intl. Airport | KLAX | `klax.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [klax]() |
-| Chicago-Midway Intl. Airport | KMDW | `kmdw.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [kmdw]() |
-| Louis Armstrong New Orleans Intl. Airport | KMSY | `kmsy.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [kmsy]() |
-| Seattle-Tacoma Intl. Airport | KSEA | `ksea.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [ksea]() |
-| San Francisco Intl. Airport | KSFO | `ksfo.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [ksfo]() |
-| Ted Stevens Anchorage Intl. Airport | PANC | `panc.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [panc]() |
+| Airport                                   | Airport ICAO | Data Config | ADE@20 | FDE@20 | ADE@50 | FDE@50 | Weights  |
+|:-----------------------------------------:|:------------:|:-----------:|:------:| :----: | :----: | :----: | :------: |
+| Ted Stevens Anchorage Intl. Airport       |      PANC    | `panc.yaml` | 10.11  | 20.87  | 38.84  | 101.89 | [panc](todo) |
+| Boston-Logan Intl. Airport                |      KBOS    | `kbos.yaml` |  5.58  | 10.90  | 21.34  |  53.76 | [kbos](todo) |
+| Ronald Reagan Washington Natl. Airport    |      KDCA    | `kdca.yaml` |  4.74  |  9.22  | 16.42  |  40.57 | [kdca](todo) |
+| Newark Liberty Intl. Airport              |      KEWR    | `kewr.yaml` |  6.61  | 12.92  | 23.68  |  57.63 | [kewr](todo) |
+| John F. Kennedy Intl. Airport             |      KJFK    | `kjfk.yaml` |  4.58  |  9.52  | 17.11  |  41.19 | [kjfk](todo) |
+| Los Angeles Intl. Airport                 |      KLAX    | `klax.yaml` | 11.36  | 20.63  | 36.08  |  88.25 | [klax](todo) |
+| Chicago-Midway Intl. Airport              |      KMDW    | `kmdw.yaml` |  3.30  |  6.12  | 11.50  |  28.80 | [kmdw](todo) |
+| Louis Armstrong New Orleans Intl. Airport |      KMSY    | `kmsy.yaml` |  2.73  |  5.12  |  9.89  |  25.68 | [kmsy](todo) |
+| Seattle-Tacoma Intl. Airport              |      KSEA    | `ksea.yaml` |  9.76  | 18.35  | 29.94  |  65.82 | [ksea](todo) |
+| San Francisco Intl. Airport               |      KSFO    | `ksfo.yaml` |  5.06  |  9.82  | 17.05  |  40.23 | [ksfo](todo) |
 
 <hr>
 
-#### Multi-Airport Experiments (Table 6 in our paper)
+#### Multi-Airport Experiments (Table 6 and 8 in our paper)
 
 The model configuration used for all of these experiments was also `marginal.yaml`.
 
-|Seen Airport(s) | Unseen Airport(s) | Data Config  | Avg. ADE@20 | Avg. FDE@20 | Avg. ADE@50 | Avg. FDE@50 | Weights |
-| :-----: | :-----: | :----------: | :----: | :----: | :----: | :----: | :-----: |
-| KMDW | KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-1.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [seen-1]() |
-| KMDW, KEWR | KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-2.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [seen-2]() |
-| KMDW, KEWR, KBOS | KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-3.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [seen-3]() |
-| KMDW, KEWR, KBOS, KSFO | KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-4.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [seen-4]() |
-| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC | KLAX, KJFK, KMSY | `seen-7.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [seen-7]() |
-| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | - | `seen-all.yaml` | xy.xy | xy.xy | xy.xy | xy.xy | [seen-all]() |
+| Seen Airport(s)                                            | Unseen Airport(s)                                    | Data Config     | Avg. ADE@20 | Avg. FDE@20 | Avg. ADE@50 | Avg. FDE@50 | Weights |
+| :--------------------------------------------------------: | :--------------------------------------------------: | :-------------: | :---------: | :---------: | :---------: | :---------: | :-----: |
+| KMDW                                                       | KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-1.yaml`   |     3.30    |     6.12    |    11.50    |    28.80    | [seen-1](todo) |
+| KMDW, KEWR                                                 | KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY       | `seen-2.yaml`   |     3.31    |     6.23    |    11.84    |    28.89    | [seen-2](todo) |
+| KMDW, KEWR, KBOS                                           | KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY             | `seen-3.yaml`   |     3.26    |     6.59    |    12.46    |    31.81    | [seen-3](todo) |
+| KMDW, KEWR, KBOS, KSFO                                     | KSEA, KDCA, PANC, KLAX, KJFK, KMSY                   | `seen-4.yaml`   |     3.52    |     6.74    |    12.71    |    31.64    | [seen-4](todo) |
+| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC                   | KLAX, KJFK, KMSY                                     | `seen-7.yaml`   |     3.59    |     7.03    |    14.35    |    38.62    | [seen-7](todo) |
+| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | -                                                    | `seen-all.yaml` |     3.88    |     7.70    |    15.30    |    40.91    | [seen-all](todo) |
 
 <hr>
 
@@ -158,26 +153,16 @@ The model configuration used for all of these experiments was also `marginal.yam
 - We trained our models under a **marginal** prediction setting, but we have support for training models on a **joint** prediction setting. To change the prediction paradigm, change the model parameter to `joint`. For example:
 
 ```bash
-cd Amelia-TF
-python train.py data=seen-all model=joint trainer=gpu
+python src/train.py data=seen-all model=joint trainer=gpu
 ```
 
 - Our model can be trained with and without context (maps). To train the trajectory-only model, use either `marginal_traj` or `joint_traj` configurations. For example,
 
 ```bash
-cd Amelia-TF
-python train.py data=seen-all model=marginal_traj trainer=gpu
+python src/train.py data=seen-all model=marginal_traj trainer=gpu
 ```
 
 <hr>
-
-### TODO? Implementation Details
-
-For running distributed training on systems with 4090 it may be possible that the NCCL backend runs into a deadlock and causes the code to hang. To prevent this, set the following environment variable before training.
-
-```bash
-export NCCL_P2P_DISABLE=1
-```
 
 ## BibTeX
 
