@@ -1,0 +1,12 @@
+defaults:
+  - default.yaml
+
+dataset:
+  config:
+    sampling_strategy: critical
+
+extra_params:
+  data_prep:
+    exp_suffix: seen4_context-${data.dataset.config.add_context}
+    seen_airports: [kbos, kewr, ksfo, kmdw]
+    unseen_airports: [klax, kdca, kmsy, kjfk, ksea, panc]

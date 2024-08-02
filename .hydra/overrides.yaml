@@ -1,0 +1,4 @@
+- data=swim_all-in
+- paths.base_dir=datasets/swim
+- trainer=ddp
+- model=exp5

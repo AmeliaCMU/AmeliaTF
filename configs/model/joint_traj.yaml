@@ -1,0 +1,12 @@
+defaults:
+  - amelia_traj.yaml
+
+extra_params: 
+  propagation: 'joint'
+  
+  tag: 'joint_${data.extra_params.data_prep.exp_suffix}' 
+  
+  plot_test: True 
+  plot_val: True
+  plot_after_n_epochs: 0
+  plot_every_n: 1000

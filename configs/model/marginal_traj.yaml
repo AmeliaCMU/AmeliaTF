@@ -1,0 +1,11 @@
+defaults:
+  - amelia_traj.yaml
+
+extra_params: 
+  propagation: 'marginal'
+  use_agent_masks: false
+  
+  tag: 'marginal_${data.extra_params.data_prep.exp_suffix}' 
+  
+  plot_test: True
+  plot_every_n: 1000
