@@ -1,0 +1,190 @@
+task_name: train
+tags:
+  - dev
+train: true
+test: true
+compile: false
+ckpt_path: null
+seed: 42
+data:
+  _target_: src.data.datamodule.DataModule
+  dataset:
+    _target_: src.data.components.swim_dataset.SWIMDataset
+    config:
+      in_data_dir: ${paths.in_data_dir}
+      context_dir: ${paths.context_dir}
+      split: null
+      traj_len: 60
+      hist_len: 10
+      pred_len: 50
+      skip: 1
+      min_agents: 2
+      max_agents: 15
+      add_context: true
+      num_polylines: 100
+      encode_agent_type: false
+      parallel: false
+      debug: false
+      do_sharding: true
+      sampling_strategy: safety
+      k_agents: 5
+  extra_params:
+    batch_size: 112
+    num_workers: 10
+    pin_memory: true
+    persistent_workers: true
+    data_prep:
+      in_data_dir: ${paths.in_data_dir}
+      train_airports:
+        - ksea
+        - kewr
+        - kbos
+        - kmdw
+      test_airports: []
+      to_process: 1.0
+      train_val_test_split:
+        - 0.7
+        - 0.1
+        - 0.2
+      test_split: 0.2
+model:
+  _target_: src.models.trajpred.TrajPred
+  optimizer:
+    lr: 0.0001
+    weight_decay: 0.1
+    beta1: 0.9
+    beta2: 0.95
+  scheduler:
+    _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+    _partial_: true
+    mode: min
+    factor: 0.1
+    patience: 10
+  net:
+    _target_: src.models.components.atc_ctx.ContextATC
+    config:
+      encoder:
+        in_size: 4
+        embed_size: 256
+        hist_len: ${data.dataset.config.hist_len}
+        pred_len: ${data.dataset.config.pred_len}
+        T_size: ${data.dataset.config.traj_len}
+        A_size: ${data.dataset.config.k_agents}
+        add_context: true
+        contextnet:
+          in_size: 5
+          embed_size: 256
+          num_mlp_layers: 1
+          num_satt_layers: 1
+          num_heads: 8
+          dropout: 0.0
+          bias: true
+          num_vectors: ${data.dataset.config.num_polylines}
+        num_satt_pre_blocks: 1
+        num_catt_pre_blocks: 1
+        num_satt_blocks: 1
+        num_catt_blocks: 1
+        num_satt_post_blocks: 1
+        add_artificial: false
+        num_satt_artificial_blocks: 1
+        num_layers: 5
+        num_heads: 8
+        dropout: 0.0
+        bias: true
+        add_agent_type: false
+        context_encoder_type: v0
+        contextnet_v0:
+          in_size: 5
+          embed_size: 256
+          num_layers: 2
+          num_vectors: ${data.dataset.config.num_polylines}
+      decoder:
+        num_dims: 7
+        num_futures: 4
+  extra_params:
+    propagation: marginal
+    tag: traj-ctx_marginal
+    train_airports: ${data.extra_params.data_prep.train_airports}
+    test_airports: ${data.extra_params.data_prep.test_airports}
+    asset_dir: ./assets
+    plot_train: false
+    plot_val: false
+    plot_test: false
+    plot_every_n: 100
+    plot_after_n_epochs: 10
+callbacks:
+  model_checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    dirpath: ${paths.output_dir}/checkpoints
+    filename: epoch_{epoch:03d}
+    monitor: val/ade
+    verbose: false
+    save_last: true
+    save_top_k: 1
+    mode: min
+    auto_insert_metric_name: false
+    save_weights_only: true
+    every_n_train_steps: null
+    train_time_interval: null
+    every_n_epochs: null
+    save_on_train_epoch_end: null
+  early_stopping:
+    _target_: lightning.pytorch.callbacks.EarlyStopping
+    monitor: val/ade
+    min_delta: 0.0
+    patience: 10
+    verbose: false
+    mode: min
+    strict: true
+    check_finite: true
+    stopping_threshold: null
+    divergence_threshold: null
+    check_on_train_epoch_end: null
+  model_summary:
+    _target_: lightning.pytorch.callbacks.RichModelSummary
+    max_depth: -1
+  rich_progress_bar:
+    _target_: lightning.pytorch.callbacks.RichProgressBar
+  lr_monitor:
+    _target_: lightning.pytorch.callbacks.LearningRateMonitor
+    logging_interval: epoch
+logger:
+  wandb:
+    _target_: lightning.pytorch.loggers.wandb.WandbLogger
+    save_dir: ${paths.output_dir}
+    offline: false
+    id: null
+    anonymous: null
+    project: boeing_swim
+    log_model: false
+    prefix: ""
+    group: init
+    tags:
+      - dev
+    job_type: testing
+trainer:
+  _target_: lightning.pytorch.trainer.Trainer
+  default_root_dir: ${paths.output_dir}
+  min_epochs: 1
+  max_epochs: 100
+  accelerator: gpu
+  devices: -1
+  gradient_clip_val: 0.5
+  check_val_every_n_epoch: 1
+  deterministic: true
+  strategy: ddp
+  num_nodes: 1
+  sync_batchnorm: true
+paths:
+  root_dir: ${oc.env:PROJECT_ROOT}
+  base_dir: datasets/swim
+  in_data_dir: ${paths.base_dir}/raw_trajectories/
+  context_dir: ${paths.base_dir}/maps
+  results_meta_path: ./out/results_meta/
+  log_dir: ${paths.root_dir}/logs/
+  output_dir: ${hydra:runtime.output_dir}
+  work_dir: ${hydra:runtime.cwd}
+extras:
+  ignore_warnings: false
+  enforce_tags: true
+  print_config: true

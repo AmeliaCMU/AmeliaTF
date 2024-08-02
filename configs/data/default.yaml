@@ -1,0 +1,75 @@
+_target_: src.data.datamodule.DataModule
+
+dataset:
+  _target_: src.data.components.amelia_dataset.AmeliaDataset
+  config:
+    in_data_dir: ${paths.scenes_dir}
+    context_dir: ${paths.context_dir}
+    assets_dir: ${paths.assets_dir}
+
+    split: null
+
+    traj_len: 60
+    hist_len: 10
+    pred_lens: [20, 50]
+
+    skip: 1
+    min_agents: 2
+    max_agents: 15
+
+    add_context: true
+    num_polylines: 100
+
+    encode_agent_type: false
+    encode_interp_flag: false
+
+    parallel: true
+    debug: false
+    do_sharding: true
+
+    sampling_strategy: random
+    supported_sampling_strategies: [random, kinematic, interactive, critical]
+    k_agents: 5
+
+    seed: ${seed}
+
+extra_params:
+  batch_size: 128
+  num_workers: 10
+  pin_memory: true
+  persistent_workers: true
+
+  data_prep:
+    traj_data_dir: ${paths.traj_data_dir}
+    in_data_dir: ${paths.in_data_dir}
+    exp_suffix: all-in_context-${data.dataset.config.add_context}
+
+    seen_airports: [kbos, kdca, kewr, kjfk, klax, kmdw, kmsy, ksea, ksfo, panc]
+    unseen_airports: []
+
+    to_process: 1.0
+    seed: ${seed}
+
+    split_type: day
+    day_splits:
+      train_val: [0.8, 0.2]
+      train_val_perc: 0.75
+      unseen_perc: 0.25
+
+    # for split_type: month
+    month_splits:
+      train_val: [0.8, 0.2]
+      train_val_perc: 0.75
+      unseen_perc: 0.25
+
+    # for split_type: random
+    random_splits:
+      train_val_test: [0.7, 0.1, 0.2]
+      unseen_perc: 0.25
+
+  task_name: ${task_name}
+  task_names: [train, eval]
+
+
+  supported_splits: [random, month, day]
+  supported_airports: [kbos, kdca, kewr, kjfk, klax, kmdw, kmsy, ksea, ksfo, panc]

@@ -1,0 +1,25 @@
+defaults:
+  - amelia.yaml
+  
+net:
+  config: 
+    encoder:
+      add_agent_type: false
+      
+      context_encoder_type: 'v0'
+      contextnet_v0: 
+        in_size: 5 
+        embed_size: 256
+        num_layers: 2
+        num_vectors: ${data.dataset.config.num_polylines}
+
+
+extra_params: 
+  propagation: 'joint'
+  
+  tag: 'joint_${data.extra_params.data_prep.exp_suffix}' 
+  
+  plot_test: True 
+  plot_val: True
+  plot_after_n_epochs: 0
+  plot_every_n: 500
