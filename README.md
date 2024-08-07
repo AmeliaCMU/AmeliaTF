@@ -106,9 +106,9 @@ python src/train.py data=seen-all model=marginal trainer=gpu
 
 If you already have a pre-trained checkpoint you can run evaluation only using `eval.py` and following a similar format as above. However, you need to provide the path to the pre-trained weights. For example,
 
-`bash
+```bash
 python src/eval.py data=seen-all model=marginal trainer=gpu ckpt_path=/path/to/pretrained/weights.ckpt
-`
+```
 
 ### Our experiments
 

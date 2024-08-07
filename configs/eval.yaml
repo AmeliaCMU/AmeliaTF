@@ -1,22 +1,24 @@
-# @package _global_
+ckpt: kbos
+type: Single-Airport
 
 defaults:
-  - _self_
-  - data: seen-all.yaml
-  - model: traj_atc_marginal.yaml
+  - data: kbos.yaml
+  - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: default.yaml
-  - paths: default.yaml
+  - paths: version8.yaml
   - extras: default.yaml
   - hydra: default.yaml
+  - _self_
 
 task_name: "eval"
 
 tags: ["dev"]
 
 # passing checkpoint path is necessary for evaluation
-ckpt_path: "epoch_009.ckpt"
 
+ckpt_dir: ${paths.base_dir}/checkpoints
+ckpt_path: ${ckpt_dir}/${type}_/${ckpt}_critical.ckpt
 # seed for random number generators in pytorch, numpy and python.random
 seed: 42
