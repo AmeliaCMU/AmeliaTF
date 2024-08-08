@@ -19,7 +19,7 @@ pd.options.mode.chained_assignment = None
 
 
 def get_filtered_list(airport, base_dir, file_list, min_agents, max_agents):
-    data_dirs = [os.path.join(base_dir, f) for f in file_list if airport in f]
+    data_dirs = [os.path.join(base_dir, f).replace('.csv', '') for f in file_list if airport in f]
     breakpoint()
     data_files = [os.path.join(dir_, f)
                   for dir_ in data_dirs for f in os.listdir(dir_)]
