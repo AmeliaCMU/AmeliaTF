@@ -1,8 +1,8 @@
-ckpt: panc
+ckpt: kdca
 type: Single-Airport
 
 defaults:
-  - data: panc.yaml
+  - data: kdca.yaml
   - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
@@ -19,6 +19,6 @@ tags: ["dev"]
 # passing checkpoint path is necessary for evaluation
 
 ckpt_dir: ${paths.base_dir}/checkpoints
-ckpt_path: ${ckpt_dir}/${type}/${ckpt}_/${ckpt}_critical.ckpt
+ckpt_path: ${ckpt_dir}/${type}/${ckpt}/${ckpt}_critical.ckpt
 # seed for random number generators in pytorch, numpy and python.random
 seed: 42
