@@ -19,6 +19,6 @@ tags: ["dev"]
 # passing checkpoint path is necessary for evaluation
 
 ckpt_dir: ${paths.base_dir}/checkpoints
-ckpt_path: ${ckpt_dir}/${type}/${ckpt}_/${ckpt}_critical.ckpt
+ckpt_path: ${ckpt_dir}/${type}/${ckpt}/${ckpt}_critical.ckpt
 # seed for random number generators in pytorch, numpy and python.random
 seed: 42
