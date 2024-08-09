@@ -1,8 +1,8 @@
-ckpt: kewr
+ckpt: kjfk
 type: Single-Airport
 
 defaults:
-  - data: kewr.yaml
+  - data: kjfk.yaml
   - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
