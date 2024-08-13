@@ -35,7 +35,7 @@ We explore different scene representation and training experiments for our model
 
 #### Basic Setup
 
-First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/INSTALL.md).
+First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md).
 
 Then, install **AmeliaTF**: Activate the environment created during the **Amelia-Scenes** setup:
 
@@ -53,11 +53,11 @@ pip install -e .
 
 #### Full Setup
 
-If you're interested in using all of our [tools](https://ameliacmu.github.io/amelia-dataset/), you can install our framework through this [script](https://github.com/AmeliaCMU/AmeliaScenes/install.sh).
+If you're interested in using all of our [tools](https://ameliacmu.github.io/amelia-dataset/), you can install our framework through this [script](https://github.com/AmeliaCMU/AmeliaScenes/install.sh) with the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md).
 
 ### Dataset
 
-To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/DATASET.md) to download and setup the dataset.
+To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/DATASET.md) to download and setup the dataset.
 
 Once downloaded, create a symbolic link into  ```datasets```:
 
@@ -68,7 +68,7 @@ ln -s /path/to/the/amelia/dataset .
 
 ### Scenario Pre-processing
 
-Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/README.md).
+Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/README.md).
 
 ### Additional Notes
 
