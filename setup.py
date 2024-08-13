@@ -26,7 +26,6 @@ setup(
         'scipy==1.9.1',
         'geographiclib==2.0',
         'pandas==2.0.3',
-        'geographiclib==2.0',
         'tqdm==4.65.0',
         'networkx==3.1',
         'python-dateutil==2.9.0',
