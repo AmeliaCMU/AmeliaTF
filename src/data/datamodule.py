@@ -67,10 +67,8 @@ class DataModule(LightningDataModule):
         # Process 'seen' airports into train/val/test splits.
         log.info("Preparing dataset splits.")
         seen_airports = self.data_prep.seen_airports
-        assert len(
-            seen_airports) > 0, f"Train airport list is empty: {seen_airports}"
-        assert len(seen_airports) == len(set(seen_airports)
-                                         ), f"Duplicate airports {seen_airports}"
+        assert len(seen_airports) > 0, f"Train airport list is empty: {seen_airports}"
+        assert len(seen_airports) == len(set(seen_airports)), f"Duplicate airports {seen_airports}"
         assert all(airport in self.supported_airports for airport in seen_airports), \
             f"Unsupported airport. Supported ones are {self.supported_airports}"
 
@@ -79,18 +77,15 @@ class DataModule(LightningDataModule):
             filename = f"{airport}_{self.data_prep.split_type}"
             with open(f"{self.data_prep.traj_data_dir}/splits/train_splits/{filename}.txt", 'r') as fp:
                 airport_list = [line.rstrip() for line in fp]
-                train_list += airport_list[:int(len(airport_list)
-                                                * self.data_prep.to_process)]
+                train_list += airport_list[:int(len(airport_list) * self.data_prep.to_process)]
 
             with open(f"{self.data_prep.traj_data_dir}/splits/val_splits/{filename}.txt", 'r') as fp:
                 airport_list = [line.rstrip() for line in fp]
-                val_list += airport_list[:int(len(airport_list)
-                                              * self.data_prep.to_process)]
+                val_list += airport_list[:int(len(airport_list) * self.data_prep.to_process)]
 
             with open(f"{self.data_prep.traj_data_dir}/splits/test_splits/{filename}.txt", 'r') as fp:
                 airport_list = [line.rstrip() for line in fp]
-                test_list += airport_list[:int(len(airport_list)
-                                               * self.data_prep.to_process)]
+                test_list += airport_list[:int(len(airport_list) * self.data_prep.to_process)]
 
         # ------------------------------------------------------------------------------------------
         # If 'unseen' airports are specified, then it will first iterate over unseen_airports and
@@ -106,14 +101,12 @@ class DataModule(LightningDataModule):
                 filename = f"{airport}_{self.data_prep.split_type}"
                 with open(f"{self.data_prep.traj_data_dir}/splits/test_splits/{filename}.txt", 'r') as fp:
                     airport_list = [line.rstrip() for line in fp]
-                    test_list += airport_list[:int(len(airport_list)
-                                                   * self.data_prep.to_process)]
+                    test_list += airport_list[:int(len(airport_list) * self.data_prep.to_process)]
 
         # ------------------------------------------------------------------------------------------
         # Load blacklist and remove files in blacklist from split files
         # breakpoint()
-        self.blacklist = D.load_blacklist(
-            self.data_prep, self.supported_airports)
+        self.blacklist = D.load_blacklist(self.data_prep, self.supported_airports)
         flat_blacklist = D.flatten_blacklist(self.blacklist)
 
         self.splits_suffix = f"{split_type}_{self.data_prep.exp_suffix}"

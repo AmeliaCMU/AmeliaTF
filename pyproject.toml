@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "amelia_tf"
+version = "1.0.0"
+description = "Amelia TF is a large transformer-based trajectory forecasting model."
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.9, <4.0"
+dependencies = [
+    'lightning==2.2.0.post0',
+    'hydra-core==1.3.2',
+    'hydra_colorlog==1.2.0',
+    'torch==2.4.0',
+    'pytorch-lightning==2.2.0.post0',
+    'wandb==0.15.11',
+    'pyrootutils==1.0.4',
+    'rich==13.7.1',
+    'opencv-python==4.7.0.72',
+    'numpy==1.21.2',
+    'imageio==2.34.0',
+    'easydict==1.10',
+    'matplotlib==3.7.1',
+    'scipy==1.9.1',
+    'geographiclib==2.0',
+    'pandas==2.0.3',
+    'tqdm==4.65.0',
+    'networkx==3.1',
+    'python-dateutil==2.9.0',
+    'amelia_scenes @ git+https://github.com/AmeliaCMU/AmeliaScenes.git@main',
+]
+
+authors = [
+    {name = "Ingrid Navarro"},
+    {name = "Pablo Ortega"},
+    {name = "Jay Patrikar"},
+    {name = "Haichuan Wang"},
+    {name = "Jong Hoon Park"},
+]
+
+[project.scripts]
+train_command = "src.train:main"
+eval_command = "src.eval:main"
+
+
+[tool.setuptools]
+packages = ["src", "src.data", "src.data.components", "src.models", "src.models.components", "src.utils"]
+
+
+[project.urls]
+Repository = "https://github.com/AmeliaCMU/AmeliaTF"
+Homepage = "https://ameliacmu.github.io"
