@@ -2,12 +2,10 @@
 
 This repository contains the model implementation, as well as the training and evaluation code of our paper:
 
-## Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](https://arxiv.org/pdf/2407.21185)]
+#### Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](https://arxiv.org/pdf/2407.21185)]
 
 [Ingrid Navarro](https://navars.xyz) *, [Pablo Ortega-Kral](https://paok-2001.github.io) *, [Jay Patrikar](https://www.jaypatrikar.me) *, Haichuan Wang,
 Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and [Sebastian Scherer](https://theairlab.org/team/sebastian/)
-
-*Equal contribution
 
 <p align="center">
   <img width="1000" src="./assets/ksfo_results.gif" alt="Amelia">
@@ -31,46 +29,33 @@ We explore different scene representation and training experiments for our model
 
 ## Pre-requisites
 
-### Installation
+#### Dataset
 
-#### Basic Setup
-
-First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md).
-
-Then, install **AmeliaTF**: Activate the environment created during the **Amelia-Scenes** setup:
-
-```bash
-conda activate amelia
-```
-
-Download the GitHub repository and install requirements:
-
-```bash
-git clone git@github.com:AmeliaCMU/AmeliaTF.git
-cd AmeliaTF
-pip install -e .
-```
-
-#### Full Setup
-
-If you're interested in using all of our [tools](https://ameliacmu.github.io/amelia-dataset/), you can install our framework through this [script](https://github.com/AmeliaCMU/AmeliaScenes/install.sh) with the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md).
-
-### Dataset
-
-To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/DATASET.md) to download and setup the dataset.
+To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://ameliacmu.github.io/amelia-dataset/) to download the dataset.
 
 Once downloaded, create a symbolic link into  ```datasets```:
 
 ```bash
 cd datasets
-ln -s /path/to/the/amelia/dataset .
+ln -s /path/to/amelia .
 ```
 
-### Scenario Pre-processing
+#### Installation
 
-Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/README.md).
+Make sure that you have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed. 
 
-### Additional Notes
+Use the  `install.sh` to download and install the Amelia Framework:
+```bash
+chmod +x install.sh
+./install.sh amelia
+```
+This will create a conda environment named `amelia` and install **Amelia-Scenes** which is a dependency of **Amelia-TF**.
+
+#### Scenario Pre-processing
+
+Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. To do so, follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/README.md).
+
+#### Additional Notes
 
 Our repository's structure is based on this [template](https://github.com/ashleve/lightning-hydra-template), which uses Hydra and Pytorch Lightning. We recommend going through their [README](https://github.com/ashleve/lightning-hydra-template?tab=readme-ov-file#your-superpowers) for further details into the code's functionalities.
 
@@ -106,9 +91,9 @@ python src/train.py data=seen-all model=marginal trainer=gpu
 
 If you already have a pre-trained checkpoint you can run evaluation only using `eval.py` and following a similar format as above. However, you need to provide the path to the pre-trained weights. For example,
 
-`bash
+```bash
 python src/eval.py data=seen-all model=marginal trainer=gpu ckpt_path=/path/to/pretrained/weights.ckpt
-`
+```
 
 ### Our experiments
 
