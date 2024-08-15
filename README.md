@@ -2,12 +2,10 @@
 
 This repository contains the model implementation, as well as the training and evaluation code of our paper:
 
-## Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](https://arxiv.org/pdf/2407.21185)]
+***Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](https://arxiv.org/pdf/2407.21185)]***
 
 [Ingrid Navarro](https://navars.xyz) *, [Pablo Ortega-Kral](https://paok-2001.github.io) *, [Jay Patrikar](https://www.jaypatrikar.me) *, Haichuan Wang,
 Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and [Sebastian Scherer](https://theairlab.org/team/sebastian/)
-
-*Equal contribution
 
 <p align="center">
   <img width="1000" src="./assets/ksfo_results.gif" alt="Amelia">
@@ -31,46 +29,39 @@ We explore different scene representation and training experiments for our model
 
 ## Pre-requisites
 
-### Installation
-
-#### Basic Setup
-
-First, install **Amelia-Scenes**. Here are the [instructions](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md).
-
-Then, install **AmeliaTF**: Activate the environment created during the **Amelia-Scenes** setup:
-
-```bash
-conda activate amelia
-```
-
-Download the GitHub repository and install requirements:
-
-```bash
-git clone git@github.com:AmeliaCMU/AmeliaTF.git
-cd AmeliaTF
-pip install -e .
-```
-
-#### Full Setup
-
-If you're interested in using all of our [tools](https://ameliacmu.github.io/amelia-dataset/), you can install our framework through this [script](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/install.sh) with the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md).
-
 ### Dataset
 
-To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/DATASET.md) to download and setup the dataset.
+To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://ameliacmu.github.io/amelia-dataset/) to download the dataset.
 
-Once downloaded, create a symbolic link into  ```datasets```:
+Once downloaded, create a symbolic link into  `datasets`:
 
 ```bash
 cd datasets
-ln -s /path/to/the/amelia/dataset .
+ln -s /path/to/amelia .
 ```
 
-### Scenario Pre-processing
+### Installation
 
-Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. Follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/README.md).
+Make sure that you have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
-### Additional Notes
+**Recommended:** Use the  [`install.sh`](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/install.sh) to download and install the Amelia Framework:
+
+```bash
+chmod +x install.sh
+./install.sh amelia
+```
+
+This will create a conda environment named `amelia` and install all dependencies.
+
+Alternatively, refer to [`INSTALL.md`](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md) for manual installation.
+
+**Note:** AmeliaTF requires the Amelia dataset and AmeliaScenes' dependencies to run, refer to AmeliaScenes' and AmeliaTF's installation.
+
+#### Scenario Pre-processing
+
+Once you've downloaded the dataset and installed the required modules. You need to post-process the dataset. To do so, follow the instructions [here](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/README.md).
+
+#### Additional Notes
 
 Our repository's structure is based on this [template](https://github.com/ashleve/lightning-hydra-template), which uses Hydra and Pytorch Lightning. We recommend going through their [README](https://github.com/ashleve/lightning-hydra-template?tab=readme-ov-file#your-superpowers) for further details into the code's functionalities.
 
@@ -87,14 +78,14 @@ conda activate amelia
 The general format for running a training experiment is:
 
 ```bash
-python src/train.py data=[data_config] model=[model_config] trainer=[trainer_config]
+python src/train.py data=<data_config> model=<model_config> trainer=<trainer_config>
 ```
 
 where:
 
-- ```[data_config]```, represents a dataset configuration specified under ```./configs/data```
-- ```[model_config]```, represents a model configuration specified under ```./configs/model```
-- ```[trainer_config]```, represents the trainer to be used, (e.g., CPU, GPU, DDP, etc), specified under ```./configs/trainer```
+- `<data_config>`, represents a dataset configuration specified under `./configs/data`
+- `<model_config>`, represents a model configuration specified under `./configs/model`
+- `<trainer_config>`, represents the trainer to be used, (e.g., CPU, GPU, DDP, etc), specified under `./configs/trainer`
 
 For example, to train our model on GPU using all of our currently supported airports, you would run:
 
