@@ -1,4 +1,3 @@
-# @package _global_
 
 defaults:
   - _self_
@@ -16,7 +15,8 @@ task_name: "eval"
 tags: ["dev"]
 
 # passing checkpoint path is necessary for evaluation
-ckpt_path: "epoch_009.ckpt"
 
+ckpt_dir: ${paths.base_dir}/checkpoints
+ckpt_path: ${ckpt_dir}/${type}/${ckpt}/${ckpt}_critical.ckpt
 # seed for random number generators in pytorch, numpy and python.random
 seed: 42

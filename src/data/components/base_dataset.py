@@ -68,7 +68,7 @@ class BaseDataset(Dataset):
         self.num_agent_types = len(G.AGENT_TYPES.keys())
 
     def set_split_list(self, split_list: str) -> None:
-        self.split_list = split_list
+        self.split_list = [f.replace('.csv', '') for f in split_list]
 
     # def set_blacklist(self, blacklist: dict) -> None:
     #     self.blacklist = blacklist
