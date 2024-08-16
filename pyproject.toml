@@ -45,7 +45,8 @@ eval_command = "src.eval:main"
 
 
 [tool.setuptools]
-packages = ["src"]
+packages = ["src", "src.data", "src.data.components", "src.models", "src.models.components", "src.utils"]
+
 
 [project.urls]
 Repository = "https://github.com/AmeliaCMU/AmeliaTF"
