@@ -1,10 +1,10 @@
 
 type: Multi-Airport
-ckpt: seen-1
+ckpt: kjfk
 
 defaults:
   - _self_
-  - data: seen-1.yaml
+  - data: kjfk.yaml
   - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
@@ -20,6 +20,6 @@ tags: ["dev"]
 # passing checkpoint path is necessary for evaluation
 
 ckpt_dir: ${paths.base_dir}/checkpoints
-ckpt_path: ${ckpt_dir}/${type}/${ckpt}/${ckpt}.ckpt
+ckpt_path: ${ckpt_dir}/${type}/${ckpt}/${ckpt}_critical.ckpt
 # seed for random number generators in pytorch, numpy and python.random
 seed: 42
