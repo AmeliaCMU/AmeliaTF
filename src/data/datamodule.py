@@ -39,6 +39,9 @@ class DataModule(LightningDataModule):
         self.data_prep = self.eparams.data_prep
         self.supported_airports = self.eparams.supported_airports
 
+        self.task_name = self.eparams.task_name
+
+        assert self.task_name in self.eparams.task_names
     def prepare_data(self):
         """ Creates the data splits for training, validation and testing. """
 
@@ -133,19 +136,20 @@ class DataModule(LightningDataModule):
         be careful not to execute things like random split twice!
         """
         if not self.data_train and not self.data_val and not self.data_test:
-            log.info(f"Processing train set")
-            self.data_train = deepcopy(self.dataset)
-            self.data_train.set_split_list(self.train_list)
-            # self.data_train.set_blacklist(self.blacklist)
-            self.data_train.prepare_data()
-            log.info(f"...done!")
+            if self.task_name == "train":
+                log.info(f"Processing train set")
+                self.data_train = deepcopy(self.dataset)
+                self.data_train.set_split_list(self.train_list)
+                # self.data_train.set_blacklist(self.blacklist)
+                self.data_train.prepare_data()
+                log.info(f"...done!")
 
-            log.info(f"Processing validation set")
-            self.data_val = deepcopy(self.dataset)
-            self.data_val.set_split_list(self.val_list)
-            # self.data_val.set_blacklist(self.data_train.get_blacklist())
-            self.data_val.prepare_data()
-            log.info(f"...done!")
+                log.info(f"Processing validation set")
+                self.data_val = deepcopy(self.dataset)
+                self.data_val.set_split_list(self.val_list)
+                # self.data_val.set_blacklist(self.data_train.get_blacklist())
+                self.data_val.prepare_data()
+                log.info(f"...done!")
 
             log.info(f"Processing test set")
             self.data_test = deepcopy(self.dataset)
