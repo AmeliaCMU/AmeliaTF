@@ -8,7 +8,7 @@ defaults:
   - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
-  - trainer: default.yaml
+  - trainer: gpu.yaml
   - paths: default.yaml
   - extras: default.yaml
   - hydra: default.yaml
