@@ -1,16 +1,16 @@
 defaults:
   - amelia.yaml
-  
+
 net:
-  config: 
+  config:
     encoder:
-      
+
       context_encoder_type: 'v0'
 
-extra_params: 
+extra_params:
   propagation: 'marginal'
-  
-  tag: 'marginal_${data.extra_params.data_prep.exp_suffix}_${data.dataset.config.sampling_strategy}' 
-  
-  plot_test: True 
-  plot_every_n: 500 
+
+  tag: 'marginal_${data.extra_params.data_prep.exp_suffix}_${data.dataset.config.sampling_strategy}'
+
+  plot_test: False
+  plot_every_n: 500

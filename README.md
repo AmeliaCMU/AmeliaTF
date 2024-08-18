@@ -2,7 +2,7 @@
 
 This repository contains the model implementation, as well as the training and evaluation code of our paper:
 
-#### Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](https://arxiv.org/pdf/2407.21185)]
+***Amelia: A Large Dataset and Model for Airport Surface Movement Forecasting [[paper](https://arxiv.org/pdf/2407.21185)]***
 
 [Ingrid Navarro](https://navars.xyz) *, [Pablo Ortega-Kral](https://paok-2001.github.io) *, [Jay Patrikar](https://www.jaypatrikar.me) *, Haichuan Wang,
 Zelin Ye, Jong Hoon Park, [Jean Oh](https://cmubig.github.io/team/jean_oh/) and [Sebastian Scherer](https://theairlab.org/team/sebastian/)
@@ -29,27 +29,33 @@ We explore different scene representation and training experiments for our model
 
 ## Pre-requisites
 
-#### Dataset
+### Dataset
 
 To run this repository, you first need to download the amelia dataset. Follow the instructions [here](https://ameliacmu.github.io/amelia-dataset/) to download the dataset.
 
-Once downloaded, create a symbolic link into  ```datasets```:
+Once downloaded, create a symbolic link into  `datasets`:
 
 ```bash
 cd datasets
 ln -s /path/to/amelia .
 ```
 
-#### Installation
+### Installation
 
-Make sure that you have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed. 
+Make sure that you have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
-Use the  `install.sh` to download and install the Amelia Framework:
+**Recommended:** Use the  [`install.sh`](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/install.sh) to download and install the Amelia Framework:
+
 ```bash
 chmod +x install.sh
 ./install.sh amelia
 ```
-This will create a conda environment named `amelia` and install **Amelia-Scenes** which is a dependency of **Amelia-TF**.
+
+This will create a conda environment named `amelia` and install all dependencies.
+
+Alternatively, refer to [`INSTALL.md`](https://github.com/AmeliaCMU/AmeliaScenes/blob/main/INSTALL.md) for manual installation.
+
+**Note:** AmeliaTF requires the Amelia dataset and AmeliaScenes' dependencies to run, refer to AmeliaScenes' and AmeliaTF's installation.
 
 #### Scenario Pre-processing
 
@@ -72,14 +78,14 @@ conda activate amelia
 The general format for running a training experiment is:
 
 ```bash
-python src/train.py data=[data_config] model=[model_config] trainer=[trainer_config]
+python src/train.py data=<data_config> model=<model_config> trainer=<trainer_config>
 ```
 
 where:
 
-- ```[data_config]```, represents a dataset configuration specified under ```./configs/data```
-- ```[model_config]```, represents a model configuration specified under ```./configs/model```
-- ```[trainer_config]```, represents the trainer to be used, (e.g., CPU, GPU, DDP, etc), specified under ```./configs/trainer```
+- `<data_config>`, represents a dataset configuration specified under `./configs/data`
+- `<model_config>`, represents a model configuration specified under `./configs/model`
+- `<trainer_config>`, represents the trainer to be used, (e.g., CPU, GPU, DDP, etc), specified under `./configs/trainer`
 
 For example, to train our model on GPU using all of our currently supported airports, you would run:
 

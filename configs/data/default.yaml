@@ -67,5 +67,9 @@ extra_params:
       train_val_test: [0.7, 0.1, 0.2]
       unseen_perc: 0.25
 
+  task_name: ${task_name}
+  task_names: [train, eval]
+
+
   supported_splits: [random, month, day]
   supported_airports: [kbos, kdca, kewr, kjfk, klax, kmdw, kmsy, ksea, ksfo, panc]
