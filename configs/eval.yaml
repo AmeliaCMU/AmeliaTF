@@ -1,10 +1,10 @@
 
 type: Multi-Airport
-ckpt: seen-2
+ckpt: seen-3
 
 defaults:
   - _self_
-  - data: seen-2.yaml
+  - data: seen-3.yaml
   - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)

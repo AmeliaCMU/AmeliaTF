@@ -100,6 +100,7 @@ class AmeliaDataset(BaseDataset):
             key_to_list[key] = [batch_data[idx][key]
                                 for idx in range(batch_size)]
 
+
         input_dict = {}
         for key, val_list in key_to_list.items():
             if key in ['scenario_id', 'airport_id', 'ego_agent_id', 'num_agents']:
