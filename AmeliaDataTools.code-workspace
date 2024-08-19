@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../AmeliaDataTools"
+		},
+		{
+			"path": "../AmeliaInference"
+		},
+		{
+			"path": "../AmeliaMaps"
+		},
+		{
+			"path": "../AmeliaScenes"
+		},
+		{
+			"path": "."
+		}
+	]
+}
