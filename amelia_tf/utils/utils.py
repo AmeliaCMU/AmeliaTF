@@ -18,9 +18,9 @@ from torch import tensor
 from typing import Callable, Tuple
 from geographiclib.geodesic import Geodesic
 
-from src.utils import pylogger, rich_utils
-from src.utils import global_masks as G
-from src.utils.transform_utils import xy_to_ll
+from amelia_tf.utils import pylogger, rich_utils
+from amelia_tf.utils import global_masks as G
+from amelia_tf.utils.transform_utils import xy_to_ll
 
 log = pylogger.get_pylogger(__name__)
 
