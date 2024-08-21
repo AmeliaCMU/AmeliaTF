@@ -25,7 +25,7 @@ pyrootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 #
 # more info: https://github.com/ashleve/pyrootutils
 # ------------------------------------------------------------------------------------ #
-from src import utils
+from amelia_tf import utils
 
 log = utils.get_pylogger(__name__)
 
@@ -51,7 +51,7 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
 
     log.info("Instantiating loggers...")
     logger: List[Logger] = utils.instantiate_loggers(cfg.get("logger"))
-    
+
     log.info(f"Instantiating datamodule <{cfg.data._target_}>")
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
 
