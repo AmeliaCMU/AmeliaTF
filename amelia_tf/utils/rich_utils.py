@@ -9,7 +9,7 @@ from pathlib import Path
 from rich.prompt import Prompt
 from typing import Sequence
 
-from src.utils import pylogger
+from amelia_tf.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 

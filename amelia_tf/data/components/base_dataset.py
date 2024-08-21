@@ -8,7 +8,7 @@ import random
 import torch
 
 import amelia_scenes.utils.common as C
-import src.utils.global_masks as G
+import amelia_tf.utils.global_masks as G
 
 from easydict import EasyDict
 from joblib import Parallel, delayed
@@ -17,7 +17,7 @@ from tqdm import tqdm
 from typing import Tuple, List
 
 
-from src.utils import pylogger
+from amelia_tf.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 

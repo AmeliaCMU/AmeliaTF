@@ -5,16 +5,16 @@ import pickle
 import random
 import torch
 
-import src.utils.data_utils as D
-import src.utils.transform_utils as T
+import amelia_tf.utils.data_utils as D
+import amelia_tf.utils.transform_utils as T
 import amelia_scenes.utils.global_masks as G
 
 from easydict import EasyDict
 from math import radians, sin, cos
 from typing import Dict
 
-from src.data.components.base_dataset import BaseDataset
-from src.utils import pylogger
+from amelia_tf.data.components.base_dataset import BaseDataset
+from amelia_tf.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 

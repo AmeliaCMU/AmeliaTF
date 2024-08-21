@@ -6,8 +6,8 @@ from math import floor
 from torch.utils.data import DataLoader, Dataset
 from typing import Optional
 
-from src.utils import pylogger
-from src.utils import data_utils as D
+from amelia_tf.utils import pylogger
+from amelia_tf.utils import data_utils as D
 
 log = pylogger.get_pylogger(__name__)
 
