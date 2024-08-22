@@ -45,7 +45,7 @@ eval_command = "amelia_tf.eval:main"
 
 
 [tool.setuptools]
-packages = ["src", "amelia_tf.data", "amelia_tf.data.components", "amelia_tf.models", "amelia_tf.models.components", "amelia_tf.utils"]
+packages = ["amelia_tf", "amelia_tf.data", "amelia_tf.data.components", "amelia_tf.models", "amelia_tf.models.components", "amelia_tf.utils"]
 
 
 [project.urls]
