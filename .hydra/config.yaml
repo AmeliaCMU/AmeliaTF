@@ -7,9 +7,9 @@ compile: false
 ckpt_path: null
 seed: 42
 data:
-  _target_: src.data.datamodule.DataModule
+  _target_: amelia_tf.data.datamodule.DataModule
   dataset:
-    _target_: src.data.components.swim_dataset.SWIMDataset
+    _target_: amelia_tf.data.components.swim_dataset.SWIMDataset
     config:
       in_data_dir: ${paths.in_data_dir}
       context_dir: ${paths.context_dir}
@@ -48,7 +48,7 @@ data:
         - 0.2
       test_split: 0.2
 model:
-  _target_: src.models.trajpred.TrajPred
+  _target_: amelia_tf.models.trajpred.TrajPred
   optimizer:
     lr: 0.0001
     weight_decay: 0.1
@@ -61,7 +61,7 @@ model:
     factor: 0.1
     patience: 10
   net:
-    _target_: src.models.components.atc_ctx.ContextATC
+    _target_: amelia_tf.models.components.atc_ctx.ContextATC
     config:
       encoder:
         in_size: 4

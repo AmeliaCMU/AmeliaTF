@@ -11,7 +11,7 @@ from typing import Tuple, List
 
 from amelia_scenes.visualization.context import debug_plot
 # from amelia_scenes.scene_utils.common import Status as s
-from src.utils.transform_utils import transform_points_2d
+from amelia_scenes.utils.transform_utils import transform_points_2d
 
 # TODO: figure out with the seeds from config are not working.
 np.set_printoptions(suppress=True)
