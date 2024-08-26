@@ -52,7 +52,8 @@ def inv_transform(traj_rel: np.array, start_abs: np.array, theta: float) -> np.a
     return rot_coords + start_abs
 
 def xy_to_ll(
-    traj_rel: tensor, start_abs_xy: tensor, start_heading: tensor, reference: Tuple, geodesic: Geodesic
+    traj_rel: tensor, start_abs_xy: tensor, start_heading: tensor, reference: Tuple, geodesic: Geodesic,
+    return_xyabs: bool = False
 ) -> np.array:
     """
     
@@ -78,6 +79,8 @@ def xy_to_ll(
         lat, lon = direct_wrapper(geodesic, bearing, rang, reference[0], reference[1], reference[2])
         traj_ll[n , :, 1] = torch.tensor(lon) 
         traj_ll[n , :, 0] = torch.tensor(lat)
+    if return_xyabs:
+        return traj_ll, torch.tensor(traj_xy_abs)
     return traj_ll
 
 def direct_wrapper(geodesic, b, r, ref_lat, ref_lon, r_scale):
