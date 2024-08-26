@@ -67,8 +67,9 @@ class BaseDataset(Dataset):
         self.encode_interp_flag = config.encode_interp_flag
         self.num_agent_types = len(G.AGENT_TYPES.keys())
 
-    def set_split_list(self, split_list: str) -> None:
-        self.split_list = [f.replace('.csv', '') for f in split_list]
+    def set_split_list(self, split_path: str) -> None:
+        with open(split_path, 'r') as fp:
+            self.split_list = [line.strip() for line in fp]
 
     # def set_blacklist(self, blacklist: dict) -> None:
     #     self.blacklist = blacklist
