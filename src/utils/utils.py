@@ -237,8 +237,7 @@ def plot_scene_batch(
 
         ll_pred, sigma_p, sigma_n = torch.zeros_like(mu), torch.zeros_like(mu), torch.zeros_like(mu)
         start_abs = gt_abs_traj[ego_id, hist_len - 1, G.XY].detach().cpu().numpy()
-        start_heading = gt_abs_traj[ego_id,
-                                    hist_len-1, G.HD].detach().cpu().numpy()
+        start_heading = gt_abs_traj[ego_id, hist_len-1, G.HD].detach().cpu().numpy()
         ref = ref_ll[airport]
         for h in range(H):
             ll_pred[:, :, h] = xy_to_ll(
