@@ -1,7 +1,7 @@
-_target_: src.data.datamodule.DataModule
+_target_: amelia_tf.data.datamodule.DataModule
 
 dataset:
-  _target_: src.data.components.amelia_dataset.AmeliaDataset
+  _target_: amelia_tf.data.components.amelia_dataset.AmeliaDataset
   config:
     in_data_dir: ${paths.scenes_dir}
     context_dir: ${paths.context_dir}

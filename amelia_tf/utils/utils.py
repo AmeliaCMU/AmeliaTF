@@ -18,9 +18,9 @@ from torch import tensor
 from typing import Callable, Tuple
 from geographiclib.geodesic import Geodesic
 
-from src.utils import pylogger, rich_utils
-from src.utils import global_masks as G
-from src.utils.transform_utils import xy_to_ll
+from amelia_tf.utils import pylogger, rich_utils
+from amelia_tf.utils import global_masks as G
+from amelia_tf.utils.transform_utils import xy_to_ll
 
 log = pylogger.get_pylogger(__name__)
 
@@ -237,8 +237,7 @@ def plot_scene_batch(
 
         ll_pred, sigma_p, sigma_n = torch.zeros_like(mu), torch.zeros_like(mu), torch.zeros_like(mu)
         start_abs = gt_abs_traj[ego_id, hist_len - 1, G.XY].detach().cpu().numpy()
-        start_heading = gt_abs_traj[ego_id,
-                                    hist_len-1, G.HD].detach().cpu().numpy()
+        start_heading = gt_abs_traj[ego_id, hist_len-1, G.HD].detach().cpu().numpy()
         ref = ref_ll[airport]
         for h in range(H):
             ll_pred[:, :, h] = xy_to_ll(

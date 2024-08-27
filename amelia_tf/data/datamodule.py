@@ -6,8 +6,8 @@ from math import floor
 from torch.utils.data import DataLoader, Dataset
 from typing import Optional
 
-from src.utils import pylogger
-from src.utils import data_utils as D
+from amelia_tf.utils import pylogger
+from amelia_tf.utils import data_utils as D
 
 log = pylogger.get_pylogger(__name__)
 
@@ -41,7 +41,16 @@ class DataModule(LightningDataModule):
 
         self.task_name = self.eparams.task_name
 
+        self.splits_suffix = f"{self.data_prep.split_type}_{self.data_prep.exp_suffix}"
+
+        self.split_path = {
+            "train": f"{self.data_prep.traj_data_dir}/splits/train_{self.splits_suffix}.txt",
+            "val": f"{self.data_prep.traj_data_dir}/splits/val_{self.splits_suffix}.txt",
+            "test": f"{self.data_prep.traj_data_dir}/splits/test_{self.splits_suffix}.txt"
+        }
+
         assert self.task_name in self.eparams.task_names
+
     def prepare_data(self):
         """ Creates the data splits for training, validation and testing. """
 
@@ -51,20 +60,8 @@ class DataModule(LightningDataModule):
 
         # ------------------------------------------------------------------------------------------
         # log.info("Creating dataset splits.")
-        split_type = self.data_prep.split_type
-        assert split_type in self.eparams.supported_splits, \
-            f"Data split type {split_type} not in supported splits: {self.eparams.supported_splits}."
-        # if split_type == "random":
-        #     # Will split data randomly. Simplest one, but potential data leakage.
-        #     D.create_random_splits(self.data_prep, self.supported_airports)
-        # elif split_type == "day":
-        #     # Will split data by day. Useful to ensure that different days go into the train/test
-        #     # sets to avoid data leakage.
-        #     D.create_day_splits(self.data_prep, self.supported_airports)
-        # else:  # month
-        #     # Will split data by month. Useful if we're training multiple months for a single
-        #     # airport, but can handle single-month airports as well.
-        #     D.create_month_splits(self.data_prep, self.supported_airports)
+        assert self.data_prep.split_type in self.eparams.supported_splits, \
+            f"Data split type {self.data_prep.split_type} not in supported splits: {self.eparams.supported_splits}."
 
         # ------------------------------------------------------------------------------------------
         # Process 'seen' airports into train/val/test splits.
@@ -108,24 +105,22 @@ class DataModule(LightningDataModule):
 
         # ------------------------------------------------------------------------------------------
         # Load blacklist and remove files in blacklist from split files
-        # breakpoint()
         self.blacklist = D.load_blacklist(self.data_prep, self.supported_airports)
         flat_blacklist = D.flatten_blacklist(self.blacklist)
 
-        self.splits_suffix = f"{split_type}_{self.data_prep.exp_suffix}"
         # ------------------------------------------------------------------------------------------
         # Save 'temporary' train/val/test splits.
         # TODO: verify that split lists do not share information
         self.train_list = D.remove_blacklisted(flat_blacklist, train_list)
-        with open(f"{self.data_prep.traj_data_dir}/splits/train_{self.splits_suffix}.txt", 'w') as fp:
+        with open(self.split_path["train"], 'w') as fp:
             fp.write('\n'.join(self.train_list))
 
         self.val_list = D.remove_blacklisted(flat_blacklist, val_list)
-        with open(f"{self.data_prep.traj_data_dir}/splits/val_{self.splits_suffix}.txt", 'w') as fp:
+        with open(self.split_path["val"], 'w') as fp:
             fp.write('\n'.join(self.val_list))
 
         self.test_list = D.remove_blacklisted(flat_blacklist, test_list)
-        with open(f"{self.data_prep.traj_data_dir}/splits/test_{self.splits_suffix}.txt", 'w') as fp:
+        with open(self.split_path["test"], 'w') as fp:
             fp.write('\n'.join(self.test_list))
 
     def setup(self, stage: Optional[str] = None):
@@ -139,21 +134,21 @@ class DataModule(LightningDataModule):
             if self.task_name == "train":
                 log.info(f"Processing train set")
                 self.data_train = deepcopy(self.dataset)
-                self.data_train.set_split_list(self.train_list)
+                self.data_train.set_split_list(self.split_path["train"])
                 # self.data_train.set_blacklist(self.blacklist)
                 self.data_train.prepare_data()
                 log.info(f"...done!")
 
                 log.info(f"Processing validation set")
                 self.data_val = deepcopy(self.dataset)
-                self.data_val.set_split_list(self.val_list)
+                self.data_val.set_split_list(self.split_path["val"])
                 # self.data_val.set_blacklist(self.data_train.get_blacklist())
                 self.data_val.prepare_data()
                 log.info(f"...done!")
 
             log.info(f"Processing test set")
             self.data_test = deepcopy(self.dataset)
-            self.data_test.set_split_list(self.test_list)
+            self.data_test.set_split_list(self.split_path["test"])
             # self.data_test.set_blacklist(self.data_val.get_blacklist())
             self.data_test.prepare_data()
             log.info(f"...done!")

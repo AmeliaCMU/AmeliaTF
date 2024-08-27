@@ -1,4 +1,4 @@
-_target_: src.models.trajpred.TrajPred
+_target_: amelia_tf.models.trajpred.TrajPred
 optimizer:
   lr: 1e-4
   weight_decay: 1e-1
@@ -13,8 +13,8 @@ scheduler:
   patience: 10
 
 net:
-  _target_: src.models.components.amelia.AmeliaTF
-  config: 
+  _target_: amelia_tf.models.components.amelia.AmeliaTF
+  config:
     encoder:
       in_size: 4
       embed_size: 256
@@ -22,10 +22,10 @@ net:
 
       hist_len: ${data.dataset.config.hist_len}
       pred_lens: ${data.dataset.config.pred_lens}
-      
+
       T_size: ${data.dataset.config.traj_len}
       A_size: ${data.dataset.config.k_agents}
-            
+
       add_context: true
       context_encoder_type: 'v0'
       contextnet:
@@ -39,8 +39,8 @@ net:
         num_vectors: ${data.dataset.config.num_polylines}
 
       # context_encoder_type: 'v0'
-      contextnet_v0: 
-        in_size: 5 
+      contextnet_v0:
+        in_size: 5
         embed_size: ${model.net.config.encoder.embed_size}
         num_layers: 2
         num_vectors: ${data.dataset.config.num_polylines}
@@ -86,24 +86,24 @@ net:
       num_layers: 5
       num_heads: 8
       dropout: 0.0
-      bias: True 
+      bias: True
 
     decoder:
       num_dims: 7
       num_futures: 4
 
-extra_params: 
+extra_params:
   propagation: null
   tag: null
   use_agent_masks: false
-  
+
   seen_airports: ${data.extra_params.data_prep.seen_airports}
   unseen_airports: ${data.extra_params.data_prep.unseen_airports}
-  
+
   asset_dir: ${paths.assets_dir}
   plot_dir: ${paths.vis_dir}
   plot_train: False
   plot_val: False
-  plot_test: False 
+  plot_test: False
   plot_every_n: 100
   plot_after_n_epochs: 20

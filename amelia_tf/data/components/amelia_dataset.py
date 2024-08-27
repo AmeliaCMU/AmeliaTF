@@ -5,16 +5,16 @@ import pickle
 import random
 import torch
 
-import src.utils.data_utils as D
-import src.utils.transform_utils as T
+import amelia_tf.utils.data_utils as D
+import amelia_tf.utils.transform_utils as T
 import amelia_scenes.utils.global_masks as G
 
 from easydict import EasyDict
 from math import radians, sin, cos
 from typing import Dict
 
-from src.data.components.base_dataset import BaseDataset
-from src.utils import pylogger
+from amelia_tf.data.components.base_dataset import BaseDataset
+from amelia_tf.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 
@@ -281,7 +281,52 @@ class AmeliaDataset(BaseDataset):
             'context': context_map,
             'adjacency': adjacency,
         }
+    
+    def transform_scene_data_bench(self, scene_data: Dict, agents_in_scene: list, ego_agent: int) -> Dict:
+        """ Transforms scene's global data to the ego-agent's reference frame.
 
+        Input
+        -----
+            scene_data[Dict]: a dictionary containing the pre-processed scene information.
+
+        Output
+        ------
+            scene_dict[Dict]: the transformed scene data.
+        """
+        sequences = scene_data['agent_sequences']
+        agent_masks = scene_data['agent_masks']
+        airport_id = scene_data['airport_id']
+    
+        # Slice the number of agents from the sequence and define random ego agent
+        sequences = sequences[agents_in_scene]
+        agent_masks = agent_masks[agents_in_scene]
+
+        rel_sequences = self.transform_sequences(sequences, ego_agent)
+
+        # TODO: debug
+        context_map, adjacency = None, None
+        context_map, adjacency = self.transform_context(
+            self.semantic_maps[airport_id], sequences, rel_sequences, ego_agent,
+            self.limits[airport_id]
+        )
+        agent_types = np.asarray(scene_data['agent_types'])
+        agent_types = agent_types[agents_in_scene]
+
+        return {
+            'scenario_id': scene_data['scenario_id'],
+            'airport_id': airport_id,
+            'agent_ids': scene_data['agent_ids'],
+            'agent_types': agent_types,
+            'agent_masks': agent_masks,
+            'ego_agent_id': ego_agent,
+            'num_agents': sequences.shape[0],
+            'sequences': sequences,
+            'rel_sequences': rel_sequences,
+            'agents_in_scene': agents_in_scene,
+            'context': context_map,
+            'adjacency': adjacency,
+        }
+    
     def __len__(self):
         return len(self.scenario_list)
 

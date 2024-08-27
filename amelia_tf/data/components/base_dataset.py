@@ -8,7 +8,7 @@ import random
 import torch
 
 import amelia_scenes.utils.common as C
-import src.utils.global_masks as G
+import amelia_tf.utils.global_masks as G
 
 from easydict import EasyDict
 from joblib import Parallel, delayed
@@ -17,7 +17,7 @@ from tqdm import tqdm
 from typing import Tuple, List
 
 
-from src.utils import pylogger
+from amelia_tf.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 
@@ -67,8 +67,9 @@ class BaseDataset(Dataset):
         self.encode_interp_flag = config.encode_interp_flag
         self.num_agent_types = len(G.AGENT_TYPES.keys())
 
-    def set_split_list(self, split_list: str) -> None:
-        self.split_list = [f.replace('.csv', '') for f in split_list]
+    def set_split_list(self, split_path: str) -> None:
+        with open(split_path, 'r') as fp:
+            self.split_list = [line.strip() for line in fp]
 
     # def set_blacklist(self, blacklist: dict) -> None:
     #     self.blacklist = blacklist

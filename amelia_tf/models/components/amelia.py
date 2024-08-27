@@ -4,10 +4,10 @@ import torch.nn as nn
 from easydict import EasyDict
 from typing import Any, Tuple
 
-from src.models.components.self_attention import SelfAttentionBlock
-from src.models.components.cross_attention import CrossAttentionBlock
-from src.models.components.gmm import GMM
-from src.models.components.common import MLP, LayerNorm
+from amelia_tf.models.components.self_attention import SelfAttentionBlock
+from amelia_tf.models.components.cross_attention import CrossAttentionBlock
+from amelia_tf.models.components.gmm import GMM
+from amelia_tf.models.components.common import MLP, LayerNorm
 
 
 class AmeliaTF(nn.Module):
@@ -36,19 +36,19 @@ class AmeliaTF(nn.Module):
         # TODO: once the best configuration is found, remove this mess.
         ctx_enc_type = self.encoder_config.context_encoder_type
         if ctx_enc_type == 'v0':
-            from src.models.components.context import ContextNetv0 as ContextNet
+            from amelia_tf.models.components.context import ContextNetv0 as ContextNet
             context_config = self.encoder_config.contextnet_v0
         elif ctx_enc_type == 'v1':
-            from src.models.components.context import ContextNetv1 as ContextNet
+            from amelia_tf.models.components.context import ContextNetv1 as ContextNet
             context_config = self.encoder_config.contextnet_v1
         elif ctx_enc_type == 'v2':
-            from src.models.components.context import ContextNetv2 as ContextNet
+            from amelia_tf.models.components.context import ContextNetv2 as ContextNet
             context_config = self.encoder_config.contextnet_v2
         elif ctx_enc_type == 'v3':
-            from src.models.components.context import ContextNetv3 as ContextNet
+            from amelia_tf.models.components.context import ContextNetv3 as ContextNet
             context_config = self.encoder_config.contextnet_v3
         elif ctx_enc_type == 'v4':
-            from src.models.components.context import ContextNetv4 as ContextNet
+            from amelia_tf.models.components.context import ContextNetv4 as ContextNet
             context_config = self.encoder_config.contextnet_v4
         else:
             raise NotImplementedError

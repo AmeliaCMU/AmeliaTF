@@ -40,12 +40,12 @@ authors = [
 ]
 
 [project.scripts]
-train_command = "src.train:main"
-eval_command = "src.eval:main"
+train_command = "amelia_tf.train:main"
+eval_command = "amelia_tf.eval:main"
 
 
 [tool.setuptools]
-packages = ["src", "src.data", "src.data.components", "src.models", "src.models.components", "src.utils"]
+packages = ["amelia_tf", "amelia_tf.data", "amelia_tf.data.components", "amelia_tf.models", "amelia_tf.models.components", "amelia_tf.utils"]
 
 
 [project.urls]

@@ -11,10 +11,10 @@ from lightning import LightningModule
 from torchmetrics import MeanMetric
 from typing import Any
 
-from src.models.components.common import LayerNorm
-from src.utils.utils import plot_scene_batch
-from src.utils import global_masks as G
-from src.utils.utils import separate_ego_agent
+from amelia_tf.models.components.common import LayerNorm
+from amelia_tf.utils.utils import plot_scene_batch
+from amelia_tf.utils import global_masks as G
+from amelia_tf.utils.utils import separate_ego_agent
 
 np.printoptions(precision=5, suppress=True)
 
@@ -116,17 +116,17 @@ class TrajPred(LightningModule):
 
         assert self.eparams.propagation in ['joint', 'marginal']
         if self.eparams.propagation == 'marginal':
-            from src.utils.metrics import marginal_ade as ade
-            from src.utils.metrics import marginal_fde as fde
-            from src.utils.metrics import marginal_prob_ade as prob_ade
-            from src.utils.metrics import marginal_prob_fde as prob_fde
-            from src.utils.losses import marginal_loss as compute_loss
+            from amelia_tf.utils.metrics import marginal_ade as ade
+            from amelia_tf.utils.metrics import marginal_fde as fde
+            from amelia_tf.utils.metrics import marginal_prob_ade as prob_ade
+            from amelia_tf.utils.metrics import marginal_prob_fde as prob_fde
+            from amelia_tf.utils.losses import marginal_loss as compute_loss
         else:
-            from src.utils.metrics import joint_ade as ade
-            from src.utils.metrics import joint_fde as fde
-            from src.utils.metrics import joint_prob_ade as prob_ade
-            from src.utils.metrics import joint_prob_fde as prob_fde
-            from src.utils.losses import lmbd_marginal_joint_loss as compute_loss
+            from amelia_tf.utils.metrics import joint_ade as ade
+            from amelia_tf.utils.metrics import joint_fde as fde
+            from amelia_tf.utils.metrics import joint_prob_ade as prob_ade
+            from amelia_tf.utils.metrics import joint_prob_fde as prob_fde
+            from amelia_tf.utils.losses import lmbd_marginal_joint_loss as compute_loss
 
         self.ade, self.fde, self.prob_ade, self.prob_fde = ade, fde, prob_ade, prob_fde
         self.compute_loss = compute_loss
@@ -513,5 +513,9 @@ class TrajPred(LightningModule):
         }
 
 
+<< << << < HEAD: src/models/trajpred.py
+
+== == == =
+>>>>>> > src_main: amelia_tf/models/trajpred.py
 if __name__ == "__main__":
     _ = TrajPred(None, None, None)

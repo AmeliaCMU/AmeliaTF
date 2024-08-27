@@ -5,13 +5,13 @@ from pytorch_lightning import Callback
 from pytorch_lightning.loggers import Logger
 from typing import List
 
-from src.utils import pylogger
+from amelia_tf.utils import pylogger
 
 log = pylogger.get_pylogger(__name__)
 
 def instantiate_callbacks(callbacks_cfg: DictConfig) -> List[Callback]:
     """Instantiates callbacks from config.
-    
+
     Input
     -----
         callbacks_cfg[DictConfig]: configuration parameters for the callbacks to instantiate.
