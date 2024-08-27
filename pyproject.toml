@@ -9,7 +9,7 @@ description = "Amelia TF is a large transformer-based trajectory forecasting mod
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.9, <4.0"
 dependencies = [
-    'lightning==2.2.0.post0',
+    'lightning==2.3.2',
     'hydra-core==1.3.2',
     'hydra_colorlog==1.2.0',
     'torch==2.4.0',
