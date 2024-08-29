@@ -513,9 +513,5 @@ class TrajPred(LightningModule):
         }
 
 
-<< << << < HEAD: src/models/trajpred.py
-
-== == == =
->>>>>> > src_main: amelia_tf/models/trajpred.py
 if __name__ == "__main__":
     _ = TrajPred(None, None, None)
