@@ -1,3 +1,4 @@
+import os
 from copy import deepcopy
 from re import split
 from easydict import EasyDict
@@ -44,16 +45,15 @@ class DataModule(LightningDataModule):
         self.splits_suffix = f"{self.data_prep.split_type}_{self.data_prep.exp_suffix}"
 
         self.split_path = {
-            "train": f"{self.data_prep.traj_data_dir}/splits/train_{self.splits_suffix}.txt",
-            "val": f"{self.data_prep.traj_data_dir}/splits/val_{self.splits_suffix}.txt",
-            "test": f"{self.data_prep.traj_data_dir}/splits/test_{self.splits_suffix}.txt"
+            "train": f"{self.data_prep.split_dir}/train_{self.splits_suffix}.txt",
+            "val": f"{self.data_prep.split_dir}/val_{self.splits_suffix}.txt",
+            "test": f"{self.data_prep.split_dir}/test_{self.splits_suffix}.txt"
         }
 
         assert self.task_name in self.eparams.task_names
 
     def prepare_data(self):
         """ Creates the data splits for training, validation and testing. """
-
         # NOTE: All inside this function SHOULD be done outside this repository.
         # TODO: Need to create 'amelia_dataset' repo to do data-preparation stuff. The data module
         # should only load the splits without having to deal with any of this.
@@ -111,6 +111,7 @@ class DataModule(LightningDataModule):
         # ------------------------------------------------------------------------------------------
         # Save 'temporary' train/val/test splits.
         # TODO: verify that split lists do not share information
+        os.makedirs(self.data_prep.split_dir, exist_ok=True)
         self.train_list = D.remove_blacklisted(flat_blacklist, train_list)
         with open(self.split_path["train"], 'w') as fp:
             fp.write('\n'.join(self.train_list))
