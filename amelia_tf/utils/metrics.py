@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from shapely import LineString
 
+
 def marginal_ade(
     Y_hat: torch.tensor, Y: torch.tensor, mask: torch.tensor = None, scale: int = 1000.0
 ) -> torch.tensor:
@@ -19,7 +20,7 @@ def marginal_ade(
         error[torch.tensor]: marginal average displacement error.
     """
     B, A, T, D = Y.size()
-    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1) # B, A, T, H, 2 -> B, A, T, H
+    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1)  # B, A, T, H, 2 -> B, A, T, H
     if mask is None:
         error = error.mean(dim=2)                                  # B, A, T, H    -> B, A, H
     else:
@@ -33,7 +34,8 @@ def marginal_ade(
             error_masked[ba] = error[ba, amask].mean(dim=0)
         error = error_masked.view(B, A, H)
     error = error.min(dim=-1)[0]                                   # B, A, H       -> B, A
-    return scale * error#.mean()                                   # B, A          -> 1
+    return scale * error  # .mean()                                   # B, A          -> 1
+
 
 def marginal_prob_ade(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.tensor,
                       mask: torch.tensor = None) -> torch.tensor:
@@ -52,7 +54,7 @@ def marginal_prob_ade(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.
         error[torch.tensor]: marginal average displacement error.
     """
     B, A, T, D = Y.size()
-    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1) # B, A, T, H, 2 -> B, A, T, H
+    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1)  # B, A, T, H, 2 -> B, A, T, H
     if mask is None:
         error = error.mean(dim=2) * Y_hat_scores                   # B, A, T, H    -> B, A, H
     else:
@@ -66,7 +68,8 @@ def marginal_prob_ade(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.
             error_masked[ba] = error[ba, amask].mean(dim=0)
         error = error_masked.view(B, A, H) * Y_hat_scores
     error = error.sum(dim=-1)                                      # B, A, H       -> B, A
-    return error#.mean()                                           # B, A          -> 1
+    return error  # .mean()                                           # B, A          -> 1
+
 
 def marginal_fde(
     Y_hat: torch.tensor, Y: torch.tensor, mask: torch.tensor = None, scale: int = 1000.0
@@ -86,7 +89,7 @@ def marginal_fde(
     """
     B, A, T, D = Y.size()
     if mask is None:
-        error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1) # B, A, H, 2 -> B, A, H
+        error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1)  # B, A, H, 2 -> B, A, H
     else:
         mask, Y_hat = mask[:, :, -T:], Y_hat[:, :, -T:]
         # Get the last valid index
@@ -97,7 +100,8 @@ def marginal_fde(
         error = (Y_hat_T - Y_T[..., None, :]).norm(dim=-1)
 
     error = error.min(dim=-1)[0]                                      # B, A, H       -> B, A
-    return scale * error#.mean()                                      # B, A          -> 1
+    return scale * error  # .mean()                                      # B, A          -> 1
+
 
 def marginal_prob_fde(
     Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.tensor, mask: torch.tensor = None
@@ -118,7 +122,7 @@ def marginal_prob_fde(
     """
     B, A, T, D = Y.size()
     if mask is None:
-        error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1) # B, A, H, 2 -> B, A, H
+        error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1)  # B, A, H, 2 -> B, A, H
     else:
         # Get the last valid index
         mask, Y_hat = mask[:, :, -T:], Y_hat[:, :, -T:]
@@ -129,7 +133,8 @@ def marginal_prob_fde(
         error = (Y_hat_T - Y_T[..., None, :]).norm(dim=-1)
     error = error * Y_hat_scores
     error = error.sum(dim=-1)                                         # B, A, H       -> B, A
-    return error#.mean()                                              # B, A          -> 1
+    return error  # .mean()                                              # B, A          -> 1
+
 
 def joint_ade(Y_hat: torch.tensor, Y: torch.tensor) -> torch.tensor:
     """ Computes the joint Average Displacement Error (jADE). Take the average error over all agents
@@ -146,12 +151,13 @@ def joint_ade(Y_hat: torch.tensor, Y: torch.tensor) -> torch.tensor:
         error[torch.tensor]: joint average displacement error.
     """
     B, A, T, D = Y.size()
-    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1) # B, A, T, H, 2 -> B, A, T, H
+    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1)  # B, A, T, H, 2 -> B, A, T, H
 
     # error across time and agents
     error = error.mean(dim=(2, 1))                                 # B, A, T, H    -> B, H
     error = error.min(dim=-1)[0]                                   # B, H          -> B
-    return error#.mean()                                           # B             -> 1
+    return error  # .mean()                                           # B             -> 1
+
 
 def joint_prob_ade(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.tensor) -> torch.tensor:
     """ Computes the joint Average Displacement Error (jADE). Take the average error over all agents
@@ -169,12 +175,13 @@ def joint_prob_ade(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.ten
         error[torch.tensor]: joint average displacement error.
     """
     B, A, T, D = Y.size()
-    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1) # B, A, T, H, 2 -> B, A, T, H
+    error = (Y_hat[..., -T:, :, :] - Y[..., None, :]).norm(dim=-1)  # B, A, T, H, 2 -> B, A, T, H
     error = error * Y_hat_scores[..., None, :]
     # error across time and agents
     error = error.mean(dim=(2, 1))                                 # B, A, T, H    -> B, H
     error = error.sum(dim=-1)                                      # B, H          -> B
-    return error#.mean()
+    return error  # .mean()
+
 
 def joint_fde(Y_hat: torch.tensor, Y: torch.tensor) -> torch.tensor:
     """ Computes the joint Final Displacement Error (jFDE). Take the final error over all agents
@@ -191,12 +198,13 @@ def joint_fde(Y_hat: torch.tensor, Y: torch.tensor) -> torch.tensor:
         error[torch.tensor]: joint average displacement error.
     """
     B, A, T, D = Y.size()
-    error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1) # B, A, H, 2 -> B, A, H
+    error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1)  # B, A, H, 2 -> B, A, H
 
     # error across agents
     error = error.mean(dim=1)                                         # B, A, H    -> B, H
     error = error.min(dim=-1)[0]                                      # B, H       -> B
-    return error#.mean()                                              # B          -> 1
+    return error  # .mean()                                              # B          -> 1
+
 
 def joint_prob_fde(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.tensor) -> torch.tensor:
     """ Computes the joint Final Displacement Error (jFDE). Take the final error over all agents
@@ -213,20 +221,19 @@ def joint_prob_fde(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.ten
         error[torch.tensor]: joint average displacement error.
     """
     B, A, T, D = Y.size()
-    error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1) # B, A, H, 2 -> B, A, H
+    error = (Y_hat[..., -1, :, :] - Y[..., -1, None, :]).norm(dim=-1)  # B, A, H, 2 -> B, A, H
     error = error * Y_hat_scores
     # error across agents
     error = error.mean(dim=1)                                         # B, A, H    -> B, H
     error = error.sum(dim=-1)                                         # B, H       -> B
-    return error#.mean()                                              # B          -> 1
-
+    return error  # .mean()                                              # B          -> 1
 
 
 # collision implementation
 def compute_collision(A, B, coll_thresh: float = 0.3):
     # A: 1, T, D
     # B: N, T, D
-    breakpoint()
+    # breakpoint()
 
     coll_sum = 0
     seg_a = np.stack([A[:-1], A[1:]], axis=1)
@@ -236,9 +243,10 @@ def compute_collision(A, B, coll_thresh: float = 0.3):
         seg_b = [LineString(x) for x in seg_b]
         coll = np.linalg.norm(A - b_sub, axis=-1) <= coll_thresh
         coll[1:] |= [x.intersects(y) for x, y in zip(seg_a, seg_b)]
-        breakpoint()
+        # breakpoint()
         coll_sum += coll.sum()
     return coll_sum
+
 
 def compute_collisions_to_gt(
     Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor, ego_agent: torch.tensor,
@@ -265,7 +273,7 @@ def compute_collisions_to_gt(
 
     collisions = torch.zeros(size=(B,))
 
-    breakpoint()
+    # breakpoint()
     # Iterating over all scenes
     # TODO: add weigh by Y_hat_scores
     for b in range(B):
@@ -281,7 +289,7 @@ def compute_collisions_to_gt(
 
 
 def compute_collisions_to_pred(Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor,
-                               ego_agent:torch.tensor,coll_thresh: float = 0.3) -> torch.tensor:
+                               ego_agent: torch.tensor, coll_thresh: float = 0.3) -> torch.tensor:
     """ Computes collisions amongst scene predictions. Assumes one predicted scene per mode.
 
     Inputs
@@ -336,8 +344,6 @@ def compute_collisions_gt2gt(
     B, A, T, D = Y_gt.shape
     Y_hat = Y_hat[..., -T:, :, :].cpu().numpy()
     Y_gt = Y_gt.cpu().numpy()
-
-
 
     collisions = torch.zeros(size=(B,))
 

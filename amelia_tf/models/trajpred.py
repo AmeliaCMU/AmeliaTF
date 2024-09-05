@@ -120,6 +120,7 @@ class TrajPred(LightningModule):
             from amelia_tf.utils.metrics import marginal_fde as fde
             from amelia_tf.utils.metrics import marginal_prob_ade as prob_ade
             from amelia_tf.utils.metrics import marginal_prob_fde as prob_fde
+
             from amelia_tf.utils.losses import marginal_loss as compute_loss
         else:
             from amelia_tf.utils.metrics import joint_ade as ade
@@ -128,7 +129,12 @@ class TrajPred(LightningModule):
             from amelia_tf.utils.metrics import joint_prob_fde as prob_fde
             from amelia_tf.utils.losses import lmbd_marginal_joint_loss as compute_loss
 
+        from amelia_tf.utils.metrics import compute_collisions_to_gt as collgt
+        from amelia_tf.utils.metrics import compute_collisions_to_pred as collpred
+        from amelia_tf.utils.metrics import compute_collisions_gt2gt as collgt2gt
+
         self.ade, self.fde, self.prob_ade, self.prob_fde = ade, fde, prob_ade, prob_fde
+        self.collgt, self.collpred, self.collgt2gt = collgt, collpred, collgt2gt
         self.compute_loss = compute_loss
         self.geodesic = Geodesic.WGS84
 
