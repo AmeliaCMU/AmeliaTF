@@ -174,6 +174,7 @@ class DataModule(LightningDataModule):
             pin_memory=self.eparams.pin_memory,
             shuffle=False,
             collate_fn=self.dataset.collate_batch,
+            persistent_workers=self.eparams.persistent_workers
         )
 
     def test_dataloader(self):
@@ -184,6 +185,7 @@ class DataModule(LightningDataModule):
             pin_memory=self.eparams.pin_memory,
             shuffle=False,
             collate_fn=self.dataset.collate_batch,
+            persistent_workers=self.eparams.persistent_workers
         )
 
 
