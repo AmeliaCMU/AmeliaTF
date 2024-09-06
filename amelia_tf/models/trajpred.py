@@ -59,12 +59,11 @@ class TrajPred(LightningModule):
         self.max_pred_len = max(self.pred_lens)
         self.val_ade, self.test_ade, self.val_fde, self.test_fde = {}, {}, {}, {}
 
-        # collision
-        # gt: ground truth
+        # collision gt: ground truth
         self.val_coll_pred2gt = {}
         self.test_coll_pred2gt05, self.test_coll_pred2gt1, self.test_coll_pred2gt3 = {}, {}, {}
         self.test_coll_pred2pred05, self.test_coll_pred2pred1, self.test_coll_pred2pred3 = {}, {}, {}
-        self.test_coll_pred2gt2gt05, self.test_coll_pred2gt2gt1, self.test_coll_pred2gt2gt3 = {}, {}, {}
+        self.test_coll_gt2gt05, self.test_coll_gt2gt1, self.test_coll_gt2gt3 = {}, {}, {}
 
         for t in self.pred_lens:
             key = 't=max' if t == self.max_pred_len else f"t={t}"
@@ -75,8 +74,8 @@ class TrajPred(LightningModule):
             self.test_coll_pred2gt1[key], self.test_coll_pred2gt3[key] = MeanMetric(), MeanMetric()
             self.test_coll_pred2pred05[key], self.test_coll_pred2pred1[key] = MeanMetric(), MeanMetric()
             self.test_coll_pred2pred3[key] = MeanMetric()
-            self.test_coll_pred2gt2gt05[key], self.test_coll_pred2gt2gt1[key] = MeanMetric(), MeanMetric()
-            self.test_coll_pred2gt2gt3[key] = MeanMetric()
+            self.test_coll_gt2gt05[key], self.test_coll_gt2gt1[key] = MeanMetric(), MeanMetric()
+            self.test_coll_gt2gt3[key] = MeanMetric()
         self.val_ade, self.test_ade = nn.ModuleDict(self.val_ade), nn.ModuleDict(self.test_ade)
         self.val_fde, self.test_fde = nn.ModuleDict(self.val_fde), nn.ModuleDict(self.test_fde)
 
@@ -87,9 +86,9 @@ class TrajPred(LightningModule):
         self.test_coll_pred2pred1 = nn.ModuleDict(self.test_coll_pred2pred1)
         self.test_coll_pred2gt3 = nn.ModuleDict(self.test_coll_pred2gt3)
         self.test_coll_pred2pred3 = nn.ModuleDict(self.test_coll_pred2pred3)
-        self.test_coll_pred2gt2gt05 = nn.ModuleDict(self.test_coll_pred2gt2gt05)
-        self.test_coll_pred2gt2gt1 = nn.ModuleDict(self.test_coll_pred2gt2gt1)
-        self.test_coll_pred2gt2gt3 = nn.ModuleDict(self.test_coll_pred2gt2gt3)
+        self.test_coll_gt2gt05 = nn.ModuleDict(self.test_coll_gt2gt05)
+        self.test_coll_gt2gt1 = nn.ModuleDict(self.test_coll_gt2gt1)
+        self.test_coll_gt2gt3 = nn.ModuleDict(self.test_coll_gt2gt3)
 
         # self.val_prob_ade, self.test_prob_ade = MeanMetric(), MeanMetric()
         # self.val_prob_fde, self.test_prob_fde = MeanMetric(), MeanMetric()
@@ -120,7 +119,6 @@ class TrajPred(LightningModule):
             from amelia_tf.utils.metrics import marginal_fde as fde
             from amelia_tf.utils.metrics import marginal_prob_ade as prob_ade
             from amelia_tf.utils.metrics import marginal_prob_fde as prob_fde
-
             from amelia_tf.utils.losses import marginal_loss as compute_loss
         else:
             from amelia_tf.utils.metrics import joint_ade as ade
@@ -129,12 +127,12 @@ class TrajPred(LightningModule):
             from amelia_tf.utils.metrics import joint_prob_fde as prob_fde
             from amelia_tf.utils.losses import lmbd_marginal_joint_loss as compute_loss
 
-        from amelia_tf.utils.metrics import compute_collisions_to_gt as collgt
-        from amelia_tf.utils.metrics import compute_collisions_to_pred as collpred
-        from amelia_tf.utils.metrics import compute_collisions_gt2gt as collgt2gt
+        from amelia_tf.utils.metrics import compute_collisions_to_gt as coll_pred2gt
+        from amelia_tf.utils.metrics import compute_collisions_to_pred as coll_pred2pred
+        from amelia_tf.utils.metrics import compute_collisions_gt2gt as coll_gt2gt
 
         self.ade, self.fde, self.prob_ade, self.prob_fde = ade, fde, prob_ade, prob_fde
-        self.collgt, self.collpred, self.collgt2gt = collgt, collpred, collgt2gt
+        self.coll_pred2gt, self.coll_pred2pred, self.coll_gt2gt = coll_pred2gt, coll_pred2pred, coll_gt2gt
         self.compute_loss = compute_loss
         self.geodesic = Geodesic.WGS84
 
@@ -346,10 +344,10 @@ class TrajPred(LightningModule):
                 f"test_coll_pred2pred0.05/{key}", self.test_coll_pred2pred05[key], on_step=False, on_epoch=True,
                 prog_bar=True)
 
-            self.test_coll_pred2gt2gt05[key](
-                self.coll_pred2gt2gt(fut_t, fut_rel[:, :, :t], num_agents, ego_agent, coll_thresh=0.05))
+            self.test_coll_gt2gt05[key](
+                self.coll_gt2gt(fut_t, fut_rel[:, :, :t], num_agents, ego_agent, coll_thresh=0.05))
             self.log(
-                f"test_coll_pred2gt2gt0.05/{key}", self.test_coll_pred2gt2gt05[key], on_step=False, on_epoch=True,
+                f"test_coll_gt2gt0.05/{key}", self.test_coll_gt2gt05[key], on_step=False, on_epoch=True,
                 prog_bar=True)
 
             self.test_coll_pred2gt1[key](
@@ -364,10 +362,10 @@ class TrajPred(LightningModule):
                 f"test_coll_pred2pred0.1/{key}", self.test_coll_pred2pred1[key], on_step=False, on_epoch=True,
                 prog_bar=True)
 
-            self.test_coll_pred2gt2gt1[key](
-                self.coll_pred2gt2gt(fut_t, fut_rel[:, :, :t], num_agents, ego_agent, coll_thresh=0.1))
+            self.test_coll_gt2gt1[key](
+                self.coll_gt2gt(fut_t, fut_rel[:, :, :t], num_agents, ego_agent, coll_thresh=0.1))
             self.log(
-                f"test_coll_pred2gt2gt0.1/{key}", self.test_coll_pred2gt2gt1[key], on_step=False, on_epoch=True,
+                f"test_coll_gt2gt0.1/{key}", self.test_coll_gt2gt1[key], on_step=False, on_epoch=True,
                 prog_bar=True)
 
             self.test_coll_pred2gt3[key](
@@ -382,10 +380,10 @@ class TrajPred(LightningModule):
                 f"test_coll_pred2pred0.3/{key}", self.test_coll_pred2pred3[key], on_step=False, on_epoch=True,
                 prog_bar=True)
 
-            self.test_coll_pred2gt2gt3[key](
-                self.coll_pred2gt2gt(fut_t, fut_rel[:, :, :t], num_agents, ego_agent, coll_thresh=0.1))
+            self.test_coll_gt2gt3[key](
+                self.coll_gt2gt(fut_t, fut_rel[:, :, :t], num_agents, ego_agent, coll_thresh=0.1))
             self.log(
-                f"test_coll_pred2gt2gt0.3/{key}", self.test_coll_pred2gt2gt3[key], on_step=False, on_epoch=True,
+                f"test_coll_gt2gt0.3/{key}", self.test_coll_gt2gt3[key], on_step=False, on_epoch=True,
                 prog_bar=True)
 
         # self.test_prob_ade(self.prob_ade(ego_mu, ego_pred_scores, ego_fut))

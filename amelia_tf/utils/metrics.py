@@ -250,7 +250,7 @@ def compute_collision(A, B, coll_thresh: float = 0.3):
 
 def compute_collisions_to_gt(
     Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor, ego_agent: torch.tensor,
-    coll_thresh: float = 0.3
+    coll_thresh: float = 0.3, device='cuda:0'
 ) -> torch.tensor:
     """ Computes collisions between predicted agent and other agents' ground truth.
 
@@ -285,11 +285,11 @@ def compute_collisions_to_gt(
         other_Y = Y_gt[b, mask]                        # A-1, T, D
         collisions[b] = max(
             [compute_collision(ego_modes[..., m, :], other_Y, coll_thresh) for m in range(M)])
-    return collisions.to('cuda:0')
+    return collisions  # .to(device)
 
 
 def compute_collisions_to_pred(Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor,
-                               ego_agent: torch.tensor, coll_thresh: float = 0.3) -> torch.tensor:
+                               ego_agent: torch.tensor, coll_thresh: float = 0.3, device: str = 'cuda:0') -> torch.tensor:
     """ Computes collisions amongst scene predictions. Assumes one predicted scene per mode.
 
     Inputs
@@ -319,12 +319,12 @@ def compute_collisions_to_pred(Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agen
         other_Y = Y_hat[b, mask]                       # A-1, T, M, D
         collisions[b] = max(
             [compute_collision(ego_modes[..., m, :], other_Y[..., m, :], coll_thresh) for m in range(M)])
-    return collisions.to('cuda:0')
+    return collisions  # .to(device)
 
 
 def compute_collisions_gt2gt(
     Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor, ego_agent: torch.tensor,
-    coll_thresh: float = 0.3
+    coll_thresh: float = 0.3, device: str = 'cuda:0'
 ) -> torch.tensor:
     """ Computes collisions amongst ground truth.
 
@@ -355,4 +355,4 @@ def compute_collisions_gt2gt(
         other_Y = Y_gt[b, mask]                        # A-1, T, D
         collisions[b] = max(
             [compute_collision(ego_gt, other_Y, coll_thresh)])
-        return collisions.to('cuda:0')
+        return collisions  # .to(device)
