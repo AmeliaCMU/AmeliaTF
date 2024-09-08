@@ -6,7 +6,7 @@ import random
 import torch
 
 import amelia_tf.utils.data_utils as D
-import amelia_tf.utils.transform_utils as T
+import amelia_scenes.utils.transform_utils as T
 import amelia_scenes.utils.global_masks as G
 
 from easydict import EasyDict
@@ -281,7 +281,7 @@ class AmeliaDataset(BaseDataset):
             'context': context_map,
             'adjacency': adjacency,
         }
-    
+
     def transform_scene_data_bench(self, scene_data: Dict, agents_in_scene: list, ego_agent: int) -> Dict:
         """ Transforms scene's global data to the ego-agent's reference frame.
 
@@ -296,7 +296,7 @@ class AmeliaDataset(BaseDataset):
         sequences = scene_data['agent_sequences']
         agent_masks = scene_data['agent_masks']
         airport_id = scene_data['airport_id']
-    
+
         # Slice the number of agents from the sequence and define random ego agent
         sequences = sequences[agents_in_scene]
         agent_masks = agent_masks[agents_in_scene]
@@ -326,7 +326,7 @@ class AmeliaDataset(BaseDataset):
             'context': context_map,
             'adjacency': adjacency,
         }
-    
+
     def __len__(self):
         return len(self.scenario_list)
 
