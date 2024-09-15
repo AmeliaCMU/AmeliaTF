@@ -42,6 +42,8 @@ extra_params:
   data_prep:
     traj_data_dir: ${paths.traj_data_dir}
     in_data_dir: ${paths.in_data_dir}
+    # path for temporary split files to be saved
+    split_dir: ${paths.output_dir}/splits
     exp_suffix: all-in_context-${data.dataset.config.add_context}
 
     seen_airports: [kbos, kdca, kewr, kjfk, klax, kmdw, kmsy, ksea, ksfo, panc]

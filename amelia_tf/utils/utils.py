@@ -10,6 +10,7 @@ import warnings
 
 import amelia_scenes.visualization.common as C
 import amelia_scenes.visualization.marginal_predictions as M
+from amelia_scenes.utils.transform_utils import xy_to_ll
 
 from easydict import EasyDict
 from importlib.util import find_spec
@@ -20,7 +21,6 @@ from geographiclib.geodesic import Geodesic
 
 from amelia_tf.utils import pylogger, rich_utils
 from amelia_tf.utils import global_masks as G
-from amelia_tf.utils.transform_utils import xy_to_ll
 
 log = pylogger.get_pylogger(__name__)
 
