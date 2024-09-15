@@ -8,6 +8,7 @@ from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 from typing import List, Tuple
 
+from amelia_tf import utils
 pyrootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
 # the setup_root above is equivalent to:

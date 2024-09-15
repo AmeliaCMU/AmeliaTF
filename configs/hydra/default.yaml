@@ -11,3 +11,8 @@ run:
 sweep:
   dir: ${paths.log_dir}/${task_name}/multiruns/${now:%Y-%m-%d}_${now:%H-%M-%S}
   subdir: ${hydra.job.num}
+
+job_logging:
+  handlers:
+    file:
+      filename: ${hydra:runtime.output_dir}/${hydra.job.name}.log
