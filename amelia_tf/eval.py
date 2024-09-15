@@ -1,5 +1,4 @@
 
-from src import utils
 import hydra
 import pyrootutils
 
@@ -56,7 +55,6 @@ def evaluate(cfg: DictConfig) -> Tuple[dict, dict]:
 
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
     trainer: Trainer = hydra.utils.instantiate(cfg.trainer, logger=logger)
-
     object_dict = {
         "cfg": cfg,
         "datamodule": datamodule,

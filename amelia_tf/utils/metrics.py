@@ -233,24 +233,24 @@ def joint_prob_fde(Y_hat: torch.tensor, Y_hat_scores: torch.tensor, Y: torch.ten
 def compute_collision(A, B, coll_thresh: float = 0.3):
     # A: 1, T, D
     # B: N, T, D
-    # breakpoint()
 
     coll_sum = 0
     seg_a = np.stack([A[:-1], A[1:]], axis=1)
+
     seg_a = [LineString(x) for x in seg_a]
     for b_sub in B:
         seg_b = np.stack([b_sub[:-1], b_sub[1:]], axis=1)
         seg_b = [LineString(x) for x in seg_b]
         coll = np.linalg.norm(A - b_sub, axis=-1) <= coll_thresh
         coll[1:] |= [x.intersects(y) for x, y in zip(seg_a, seg_b)]
-        # breakpoint()
+
         coll_sum += coll.sum()
     return coll_sum
 
 
 def compute_collisions_to_gt(
     Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor, ego_agent: torch.tensor,
-    coll_thresh: float = 0.3, device='cuda:0'
+    coll_thresh: float = 0.3
 ) -> torch.tensor:
     """ Computes collisions between predicted agent and other agents' ground truth.
 
@@ -267,13 +267,13 @@ def compute_collisions_to_gt(
 
     """
     B, A, T, D = Y_gt.shape
+    device = Y_hat.device
     Y_hat = Y_hat[..., -T:, :, :].cpu().numpy()
     Y_gt = Y_gt.cpu().numpy()
     _, _, _, M, _ = Y_hat.shape
 
     collisions = torch.zeros(size=(B,))
 
-    # breakpoint()
     # Iterating over all scenes
     # TODO: add weigh by Y_hat_scores
     for b in range(B):
@@ -285,11 +285,13 @@ def compute_collisions_to_gt(
         other_Y = Y_gt[b, mask]                        # A-1, T, D
         collisions[b] = max(
             [compute_collision(ego_modes[..., m, :], other_Y, coll_thresh) for m in range(M)])
-    return collisions  # .to(device)
+
+    return collisions.to(device)
 
 
-def compute_collisions_to_pred(Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor,
-                               ego_agent: torch.tensor, coll_thresh: float = 0.3, device: str = 'cuda:0') -> torch.tensor:
+def compute_collisions_to_pred(
+        Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor, ego_agent: torch.tensor,
+        coll_thresh: float = 0.3) -> torch.tensor:
     """ Computes collisions amongst scene predictions. Assumes one predicted scene per mode.
 
     Inputs
@@ -305,6 +307,7 @@ def compute_collisions_to_pred(Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agen
 
     """
     B, A, T, D = Y_gt.shape
+    device = Y_hat.device
     Y_hat = Y_hat[..., -T:, :, :].cpu().numpy()
     _, _, _, M, _ = Y_hat.shape
 
@@ -319,12 +322,12 @@ def compute_collisions_to_pred(Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agen
         other_Y = Y_hat[b, mask]                       # A-1, T, M, D
         collisions[b] = max(
             [compute_collision(ego_modes[..., m, :], other_Y[..., m, :], coll_thresh) for m in range(M)])
-    return collisions  # .to(device)
+    return collisions.to(device)
 
 
 def compute_collisions_gt2gt(
     Y_hat: torch.Tensor, Y_gt: torch.Tensor, num_agents: torch.tensor, ego_agent: torch.tensor,
-    coll_thresh: float = 0.3, device: str = 'cuda:0'
+    coll_thresh: float = 0.3
 ) -> torch.tensor:
     """ Computes collisions amongst ground truth.
 
@@ -342,6 +345,7 @@ def compute_collisions_gt2gt(
         """
 
     B, A, T, D = Y_gt.shape
+    device = Y_hat.device
     Y_hat = Y_hat[..., -T:, :, :].cpu().numpy()
     Y_gt = Y_gt.cpu().numpy()
 
@@ -355,4 +359,4 @@ def compute_collisions_gt2gt(
         other_Y = Y_gt[b, mask]                        # A-1, T, D
         collisions[b] = max(
             [compute_collision(ego_gt, other_Y, coll_thresh)])
-        return collisions  # .to(device)
+        return collisions.to(device)
