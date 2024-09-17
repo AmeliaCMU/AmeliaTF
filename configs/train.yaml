@@ -7,7 +7,7 @@ defaults:
   - data: kmdw.yaml
   - model: marginal.yaml
   - callbacks: default.yaml
-  - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
+  - logger: wandb_user.yaml # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: gpu.yaml
   - paths: default.yaml
   - extras: default.yaml
