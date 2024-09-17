@@ -10,3 +10,5 @@ extra_params:
     exp_suffix: seen4_context-${data.dataset.config.add_context}
     seen_airports: [kbos, kewr, ksfo, kmdw]
     unseen_airports: [klax, kdca, kmsy, kjfk, ksea, panc]
+
+    task: seen-4

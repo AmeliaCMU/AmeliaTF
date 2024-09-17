@@ -1,7 +1,9 @@
 defaults:
   - default.yaml
-  
+
 extra_params:
   data_prep:
     exp_suffix: kmsy_context-${data.dataset.config.add_context}
     seen_airports: [kmsy]
+
+    task: kmsy
