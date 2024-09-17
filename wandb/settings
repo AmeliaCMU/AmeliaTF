@@ -1,7 +1,0 @@
-[default]
-entity = social-boeing
-project = amelia_single_airport
-base_url = https://api.wandb.ai
-disabled = true
-mode = offline
-
