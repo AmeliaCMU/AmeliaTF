@@ -4,11 +4,11 @@ ckpt: seen-1
 
 defaults:
   - _self_
-  - data: seen-all.yaml
+  - data: seen-1.yaml
   - model: marginal.yaml
   - callbacks: default.yaml
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
-  - trainer: default.yaml
+  - trainer: gpu.yaml
   - paths: default.yaml
   - extras: default.yaml
   - hydra: default.yaml
