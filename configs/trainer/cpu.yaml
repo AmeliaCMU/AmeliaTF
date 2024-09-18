@@ -2,5 +2,5 @@ defaults:
   - default.yaml
 
 accelerator: cpu
-strategy: cpu
+
 devices: 1
