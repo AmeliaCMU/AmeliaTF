@@ -229,8 +229,8 @@ class AmeliaDataset(BaseDataset):
         # num_agents = min(self.k_agents, 2)#scene_data['random_valid'])
         num_agents = len(agents_in_scene)
         # TODO: get GLOBAL seed from config files
-        # random.seed(seed)
         if random_ego:
+            random.seed(self.seed)
             ego_agent = random.randint(a=0, b=num_agents-1)
         else:
             ego_agent = 0
