@@ -239,6 +239,11 @@ class AmeliaDataset(BaseDataset):
         sequences = sequences[agents_in_scene]
         agent_masks = agent_masks[agents_in_scene]
 
+        # rotate agents so that ego agent is at the input 0
+        sequences = np.roll(sequences, -ego_agent, axis=0)
+        agent_masks = np.roll(agent_masks, -ego_agent, axis=0)
+        ego_agent = 0
+
         rel_sequences = self.transform_sequences(sequences, ego_agent)
 
         if self.encode_interp_flag:
