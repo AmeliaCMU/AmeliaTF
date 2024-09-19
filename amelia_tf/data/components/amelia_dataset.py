@@ -229,7 +229,7 @@ class AmeliaDataset(BaseDataset):
         # num_agents = min(self.k_agents, 2)#scene_data['random_valid'])
         num_agents = len(agents_in_scene)
         # TODO: get GLOBAL seed from config files
-        random.seed(self.seed)
+        # random.seed(self.seed)
         if random_ego:
             ego_agent = random.randint(a=0, b=num_agents-1)
         else:
@@ -240,9 +240,9 @@ class AmeliaDataset(BaseDataset):
         agent_masks = agent_masks[agents_in_scene]
 
         # rotate agents so that ego agent is at the input 0
-        # sequences = np.roll(sequences, -ego_agent, axis=0)
-        # agent_masks = np.roll(agent_masks, -ego_agent, axis=0)
-        # ego_agent = 0
+        sequences = np.roll(sequences, -ego_agent, axis=0)
+        agent_masks = np.roll(agent_masks, -ego_agent, axis=0)
+        ego_agent = 0
 
         rel_sequences = self.transform_sequences(sequences, ego_agent)
 
