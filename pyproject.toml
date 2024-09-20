@@ -28,7 +28,6 @@ dependencies = [
     'tqdm==4.65.0',
     'networkx==3.1',
     'python-dateutil==2.9.0',
-    'amelia_scenes @ git+https://github.com/AmeliaCMU/AmeliaScenes.git@main',
 ]
 
 authors = [
@@ -37,6 +36,11 @@ authors = [
     {name = "Jay Patrikar"},
     {name = "Haichuan Wang"},
     {name = "Jong Hoon Park"},
+]
+
+[project.optional-dependencies]
+amelia_tf = [
+    'amelia_scenes @ git+https://github.com/AmeliaCMU/AmeliaScenes.git@main',
 ]
 
 [project.scripts]
