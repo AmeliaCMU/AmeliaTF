@@ -1,3 +1,4 @@
+from amelia_tf import utils
 import hydra
 import lightning as L
 import pyrootutils
@@ -25,9 +26,9 @@ pyrootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 #
 # more info: https://github.com/ashleve/pyrootutils
 # ------------------------------------------------------------------------------------ #
-from amelia_tf import utils
 
 log = utils.get_pylogger(__name__)
+
 
 @utils.task_wrapper
 def train(cfg: DictConfig) -> Tuple[dict, dict]:
@@ -103,6 +104,7 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
 
     return metric_dict, object_dict
 
+
 @hydra.main(version_base="1.3", config_path="../configs", config_name="train.yaml")
 def main(cfg: DictConfig) -> Optional[float]:
     # apply extra utilities
@@ -119,6 +121,7 @@ def main(cfg: DictConfig) -> Optional[float]:
 
     # return optimized metric
     return metric_value
+
 
 if __name__ == "__main__":
     main()
