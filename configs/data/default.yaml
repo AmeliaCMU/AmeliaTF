@@ -27,7 +27,7 @@ dataset:
     debug: false
     do_sharding: true
 
-    sampling_strategy: random
+    sampling_strategy: critical
     supported_sampling_strategies: [random, kinematic, interactive, critical]
     k_agents: 5
 
