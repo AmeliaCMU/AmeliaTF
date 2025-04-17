@@ -196,7 +196,7 @@ class AmeliaDataset(BaseDataset):
         )
         return semantic_map, adjacency
 
-    def transform_scene_data(self, scene_data: Dict, seed: int = 42, random_ego: bool = True) -> Dict:
+    def transform_scene_data(self, scene_data: Dict, random_ego: bool = True, ego_agent_id: int = 0) -> Dict:
         """ Transforms scene's global data to the ego-agent's reference frame.
 
         Input
@@ -223,17 +223,38 @@ class AmeliaDataset(BaseDataset):
         #     agents_in_scene = scene_data['critical_order'][:self.k_agents]
         # else:
         #     raise ValueError(f"Sampling strategy: {self.sampling_strategy} not supported!")
+
+        # get the ego agent id from the scene data
         agents_in_scene = scene_data['meta']['agent_order'][self.sampling_strategy][:self.k_agents]
+        num_agents = len(agents_in_scene)
+        if random_ego:
+            random.seed(self.seed)
+            ego_agent = random.randint(a=0, b=num_agents-1)
+
+        elif not ego_agent_id:
+            # most critical agent
+            ego_agent = 0
+        elif ego_agent_id in scene_data['agent_ids']:
+            # get the index of the ego agent in the scene data
+
+            ego_agent_idx = scene_data['agent_ids'].index(ego_agent_id)
+            if not ego_agent_idx in agents_in_scene:
+                agents_in_scene = np.append([ego_agent_idx], agents_in_scene)
+                agents_in_scene = agents_in_scene[:self.k_agents]
+                ego_agent = 0
+            else:
+                ego_agent = np.where(agents_in_scene == ego_agent_idx)[0][0]
+        else:
+            raise ValueError(f"Ego agent {ego_agent_id} not in scene data!")
+
+        # set ego agent to the first agent in the scene
+        if ego_agent != 0:
+            # set ego agent in the first position and shift the rest
+            agents_in_scene = np.append([agents_in_scene[ego_agent]], np.delete(agents_in_scene, ego_agent))
+            ego_agent = 0
 
         # Choose an ego-agent from the valid ones. NOTE: Valid ones are should appear first.
         # num_agents = min(self.k_agents, 2)#scene_data['random_valid'])
-        num_agents = len(agents_in_scene)
-        # TODO: get GLOBAL seed from config files
-        # random.seed(seed)
-        if random_ego:
-            ego_agent = random.randint(a=0, b=num_agents-1)
-        else:
-            ego_agent = 0
 
         # Slice the number of agents from the sequence and define random ego agent
         sequences = sequences[agents_in_scene]
