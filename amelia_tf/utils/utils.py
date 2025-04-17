@@ -231,6 +231,7 @@ def plot_scene_batch(
         gt_abs_traj = sequences[:num_agents]  # N, T, D
         gt_history, gt_future = gt_abs_traj[:, :hist_len, :], gt_abs_traj[:, hist_len:, :]
         mu, sigma = mu[:num_agents, ..., :dim], sigma[:num_agents, ..., :dim]
+        
         scores = scores[:num_agents]
 
         # Transform relative XY prediction to absolute LL space
