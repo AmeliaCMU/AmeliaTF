@@ -8,7 +8,7 @@ __pycache__/
 # C extensions
 *.so
 
-out/
+out
 scenario_identification/out
 stats/out
 *.vscode
