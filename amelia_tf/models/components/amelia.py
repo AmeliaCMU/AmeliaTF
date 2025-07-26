@@ -1,18 +1,26 @@
 import torch
 import torch.nn as nn
 
+
 from easydict import EasyDict
+from omegaconf import OmegaConf
 from typing import Any, Tuple
+
+import os
+import json
+from huggingface_hub import PyTorchModelHubMixin
 
 from amelia_tf.models.components.self_attention import SelfAttentionBlock
 from amelia_tf.models.components.cross_attention import CrossAttentionBlock
 from amelia_tf.models.components.gmm import GMM
 from amelia_tf.models.components.common import MLP, LayerNorm
 
-class AmeliaTF(nn.Module):
+
+class AmeliaTF(nn.Module, PyTorchModelHubMixin, repo_url="https://huggingface.co/AmeliaCMU/AmeliaTF-Seen-7"):
     """ Context-aware model for trajectory prediction on airport data. Baseline designed for both,
     trajectory and context data. Largely based on the SceneTransformer:
     https://arxiv.org/pdf/2106.08417.pdf """
+
     def __init__(self, config: EasyDict) -> None:
         super().__init__()
 
@@ -172,3 +180,34 @@ class AmeliaTF(nn.Module):
         # decoding
         pred_scores, mu, sigma = self.decoder_head(x)
         return pred_scores, mu, sigma
+
+    def save_pretrained(self, save_directory, **kwargs):
+        save_directory = os.path.abspath(save_directory)
+        os.makedirs(save_directory, exist_ok=True)
+        # Save model weights
+        torch.save(self.state_dict(), os.path.join(save_directory, "pytorch_model.bin"))
+        # Convert ListConfig to dict or list
+        encoder_config_dict = OmegaConf.to_container(self.encoder_config, resolve=True)
+        decoder_config_dict = OmegaConf.to_container(self.decoder_config, resolve=True)
+        config_dict = {"encoder": encoder_config_dict, "decoder": decoder_config_dict,
+                       "kwargs": kwargs}
+
+        # Save config
+        with open(os.path.join(save_directory, "config.json"), "w") as f:
+            json.dump(config_dict, f)
+        print(f"Model and config saved to {save_directory}")
+
+    @classmethod
+    def from_pretrained(cls, load_directory, device="cpu", **kwargs):
+        # Load config
+        with open(os.path.join(load_directory, "config.json"), "r") as f:
+            config_dict = json.load(f)
+        # Convert config_dict to EasyDict or your config format
+        config = EasyDict(config_dict)
+        # Initialize the model with the loaded config
+        model = cls(config, **kwargs)
+        # Load weights
+        state_dict = torch.load(os.path.join(load_directory, "pytorch_model.bin"), map_location=device)
+        breakpoint()
+        model.load_state_dict(state_dict)
+        return model
