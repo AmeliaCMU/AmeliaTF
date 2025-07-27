@@ -3,6 +3,7 @@ import torch
 from torch.nn import functional as F
 from amelia_tf.utils.utils import separate_ego_agent
 
+
 def marginal_loss(
     pred_scores: torch.tensor, mu: torch.tensor, sigma: torch.tensor, target: torch.tensor,
     ego_agent: torch.tensor = None, agent_mask: torch.tensor = None, epoch: int = 0,
@@ -31,6 +32,7 @@ def marginal_loss(
         error[torch.tensor]: scalar value representing the marginal loss.
 
     """
+    breakpoint()
     B, A, T, N, D = mu.size()
 
     if not ego_agent is None:
@@ -49,7 +51,7 @@ def marginal_loss(
         agent_mask = None if agent_mask is None else separate_ego_agent(agent_mask, ego_agent)
 
     # distance: (B, A, T, N, D) -> (B, A, T, N)
-    distance = (mu - target[...,None,:]).norm(dim=-1)
+    distance = (mu - target[..., None, :]).norm(dim=-1)
     if agent_mask is None:
         # agg_distance: (B, A, T, N) -> (B, A, N)
         agg_distance = distance.mean(dim=2)
@@ -59,7 +61,7 @@ def marginal_loss(
         gt_idx = agg_distance.argmin(dim=-1)
 
         # select the correct independent future; mask all else
-        mask = F.one_hot(gt_idx, num_classes = N)[..., None, :, None].repeat(1, 1, T, 1, D)
+        mask = F.one_hot(gt_idx, num_classes=N)[..., None, :, None].repeat(1, 1, T, 1, D)
         mu = mu * mask
         sigma = sigma * mask
         target = target[..., None, :].repeat(1, 1, 1, N, 1) * mask
@@ -84,20 +86,21 @@ def marginal_loss(
         # TODO: debug
         # Select the correct independent future; mask all else
         amask = agent_mask.view(B, A, T, 1, 1).repeat(1, 1, 1, N, D)
-        mask = F.one_hot(gt_idx, num_classes = N)[..., None, :, None].repeat(1, 1, T, 1, D) * amask
+        mask = F.one_hot(gt_idx, num_classes=N)[..., None, :, None].repeat(1, 1, T, 1, D) * amask
         mu = mu * mask
         sigma = sigma * mask
         target = target[..., None, :].repeat(1, 1, 1, N, 1) * mask
 
     loss_cls = F.cross_entropy(
         input=pred_scores.flatten(0, 1), target=gt_idx.flatten(), reduction='mean', ignore_index=N)
-    loss_reg = F.gaussian_nll_loss(mu,target,sigma)
+    loss_reg = F.gaussian_nll_loss(mu, target, sigma)
 
     return loss_cls + loss_reg
 
+
 def joint_loss(
     pred_scores: torch.tensor, mu: torch.tensor, sigma: torch.tensor, target: torch.tensor,
-    epoch: int = 0, max_epochs: int = 100, add_diversity: bool = True, ego_agent = None
+    epoch: int = 0, max_epochs: int = 100, add_diversity: bool = True, ego_agent=None
 ) -> torch.tensor:
     """ Computes a classification and regression loss for the scene jointly. We treat each future to
     be coherent futures across all agents. Thus, we aggregate the loss across all agents and time
@@ -127,7 +130,7 @@ def joint_loss(
     B, A, T, N, D = mu.size()
 
     # distance: (B, A, T, N, D) -> (B, A, T, N)
-    distance = (mu - target[...,None,:]).norm(dim=-1)
+    distance = (mu - target[..., None, :]).norm(dim=-1)
     # agg_distance: (B, A, T, N) -> (B, A, N) -> (B, N)
     agg_distance = distance.mean(dim=(2, 1))
 
@@ -136,7 +139,7 @@ def joint_loss(
     gt_idx = agg_distance.argmin(dim=-1)
 
     # select the correct joint future; mask all else
-    mask = F.one_hot(gt_idx, num_classes = N)[:, None, None, :, None].repeat(1, A, T, 1, D)
+    mask = F.one_hot(gt_idx, num_classes=N)[:, None, None, :, None].repeat(1, A, T, 1, D)
     mu = mu * mask
     sigma = sigma * mask
     target = target[..., None, :].repeat(1, 1, 1, N, 1) * mask
@@ -147,6 +150,7 @@ def joint_loss(
     loss_reg = F.gaussian_nll_loss(mu, target, sigma)
 
     return loss_cls + loss_reg
+
 
 def diversity_loss(pred: torch.tensor, sigma_d: float = 0.001) -> torch.tensor:
     B, A, T, N, D = pred.shape
@@ -168,7 +172,7 @@ def diversity_loss(pred: torch.tensor, sigma_d: float = 0.001) -> torch.tensor:
 
 def lmbd_marginal_joint_loss(
     pred_scores: torch.tensor, mu: torch.tensor, sigma: torch.tensor, target: torch.tensor,
-    lmbd: float = 0.5, epoch: int = 0, max_epochs: int = 100, add_diversity: bool = True, ego_agent = None
+    lmbd: float = 0.5, epoch: int = 0, max_epochs: int = 100, add_diversity: bool = True, ego_agent=None
 ) -> torch.tensor:
     """ Computes a classification and regression loss for the scene marginally and jointly. We treat
     each future to be coherent futures across all agents. Thus, we aggregate the loss across all agents
@@ -203,6 +207,7 @@ def lmbd_marginal_joint_loss(
         return (1.0 - lmbd) * m + lmbd * j + 0.1 * d
 
     return lmbd * m + (1 - lmbd) * j
+
 
 def weighted_marginal_joint_loss(
     pred_scores: torch.tensor, mu: torch.tensor, sigma: torch.tensor, target: torch.tensor,
