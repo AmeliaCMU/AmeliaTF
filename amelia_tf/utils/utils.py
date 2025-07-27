@@ -147,12 +147,13 @@ def plot_scene_batch(
     out_dir: str = './out',
     propagation: str = 'marginal',
     dim: int = 2,
-    plot_full_scene=False,
+    plot_full_scene=True,
     k_agents: int = 5,
     plot_n: int = 20
 ) -> None:
     scene = batch['scene_dict']
     pred_scores, mus, sigmas = predictions
+    
     B, N, H = pred_scores.shape
 
     # TODO: pre-load these in trajpred.py
@@ -171,6 +172,7 @@ def plot_scene_batch(
     image = image.astype(np.uint8)
     agents[C.UNKNOWN] = image
 
+    # breakpoint()
     if plot_full_scene:
         num_agents = scene['num_agents'][0]
         zipped = zip(
@@ -187,6 +189,7 @@ def plot_scene_batch(
         )
 
     else:
+        # TODO: wtf is this?. Probably should be removed
         zipped = zip(
             pred_scores,           # B, N, H
             mus,                   # B, N, T, H, Dxy
@@ -201,6 +204,7 @@ def plot_scene_batch(
 
     to_plot = random.sample(range(B), k=min(plot_n, B))
 
+    # breakpoint()
     for i, scene in enumerate(zipped):
         if plot_full_scene:
             (scores, mu, sigma, sequences, num_agents, ego_id,

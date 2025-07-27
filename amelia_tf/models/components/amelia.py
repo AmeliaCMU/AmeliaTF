@@ -134,7 +134,7 @@ class AmeliaTF(nn.Module):
 
         Outputs
         -------
-            pred_scores[torch.tensor(B, A, T, H)]: prediction scores for each prediction trajectory's
+            pred_scores[torch.tensor(B, A, H)]: prediction scores for each prediction trajectory's
                 prediction head.
                 H: number of predicted heads.
             mu[torch.tensor(B, A, T, H, D)]: predicted means for each trajectory.

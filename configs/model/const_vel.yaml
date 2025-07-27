@@ -72,8 +72,8 @@ extra_params:
 
   asset_dir: ${paths.assets_dir}
   plot_dir: ${paths.vis_dir}
-  plot_train: False
-  plot_val: False
-  plot_test: False
+  plot_train: True
+  plot_val: True
+  plot_test: True
   plot_every_n: 100
   plot_after_n_epochs: 20

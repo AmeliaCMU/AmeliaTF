@@ -5,6 +5,7 @@ from easydict import EasyDict
 from typing import Any, Tuple
 
 from amelia_tf.models.components.gmm import GMM
+from amelia_tf.utils.utils import separate_ego_agent
 
 
 class ConstVelocity(nn.Module):
@@ -78,57 +79,46 @@ class ConstVelocity(nn.Module):
         device = x.device
         B, A, T, D = x.shape
         pred_len = max(self.pred_lens)
+        H = self.decoder_head.num_futures
+        
+        # Init tensors to populate with predictions
+        pred_scores = torch.ones(B, A, H)
+        sigma = torch.zeros(B, A, T, H, 3)
+        pred_traj = torch.zeros(B, A, T, 3)
 
         # Unpack ego agent information
-        ego_agent_id = kwargs.get("ego_agent")
-        ego_agent_id = torch.from_numpy(ego_agent_id)
-        ego_agent_id = ego_agent_id.to(device).long()  # (B,)
+        ego_id = kwargs.get("ego_agent")
+        ego_agent_id = torch.from_numpy(ego_id)
         ego_index = ego_agent_id.view(B, 1, 1, 1).expand(-1, 1, self.hist_len, D)
 
-        # Get ego agent history
-        ego_hist = torch.gather(x[:, :, :self.hist_len, :], dim=1, index=ego_index)  # (B, 1, hist_len, D)
-        ego_hist = ego_hist.squeeze(1)  # (B, hist_len, D)
+        # Get ego agent's history and calculate velocity at last timestep
+        ego_hist = torch.gather(x, dim=1, index=ego_index).squeeze(1)
+        pos_t1 = ego_hist[:, -1, :3]  
+        pos_t0 = ego_hist[:, -2, :3]  
+        velocity = pos_t1 - pos_t0    # Velocity for  xyz
+        
+        # Propagate velocity by aggregating across timesteps
+        timesteps = torch.arange(1, pred_len + 1, device=device).view(1, pred_len, 1)   # (1, T_pred, 1)
+        displacements = velocity.unsqueeze(1) * timesteps
+        ego_future = pos_t1.unsqueeze(1) + displacements
 
-        # Velocity
-        timesteps = torch.arange(1, pred_len + 1, device=device).float()
-        timesteps = timesteps.view(1, -1, 1).expand(B, -1, 3)
-        deltas = ego_hist[:, -2, :3] - ego_hist[:, -1, :3]  # Speed components in X, Y, Z
-        displacements = deltas.unsqueeze(1) * timesteps
+        ego_traj = torch.cat([ego_hist[:, :, :3], ego_future], dim=1)  # (B, T, 3)
+        
+        # Populate the prediction tensors
+        src = ego_traj.unsqueeze(1)                                   # (B, 1, T_total, 3)
+        ego_idx = ego_agent_id.view(B, 1, 1, 1).expand(-1, 1, T, 3)  # (B, 1, T_total, 3)
+        pred_traj.scatter_(dim=1, index=ego_idx, src=src)             # (B, A, T_total, 3)
 
-        # Get initial values and components
-        last_pos = ego_hist[:, -1, :3]
-
-        # Create a dummy vector to populate with predictions
-        future = torch.zeros(B, T, 3, device=device)
-        # breakpoint()
-        future[:, self.hist_len:, :] = last_pos.unsqueeze(1) + displacements
-
-        # For usability with other evaluation repeat the prediction. Repeat prediction along H -> B,A H, T ,D
-        H = self.decoder_head.num_futures
-        repeated_future = future.unsqueeze(1).expand(-1, H, -1, -1)  # (B, H, T, D)
-
-        # Replace
-        pred_traj = torch.zeros(B, A, H, T, 3, device=device)
-        ego_index_scatter = ego_agent_id.view(B, 1, 1, 1, 1).expand(-1, 1, H, T, 3)
-        pred_traj.scatter_(1, ego_index_scatter, repeated_future.unsqueeze(1))
-
-        # Reorder to be B, A, T, H, D
-        pred_traj = pred_traj.permute(0, 1, 3, 2, 4)  # (B, A, T, H, D)
-
-        # Get pred scores and sigma
-        pred_scores = torch.ones(B, A, T, H)
-        sigma = torch.zeros(B, A, T, H, 3)
-
-        # future[:, :, 1] = last_pos[:, 1:2] + delta_y
-        # future[:, :, 2] = last_pos[:, 2:3].expand(-1, pred_len)
-        # future[:, :, 3] = last_heading.unsqueeze(1).expand(-1, pred_len)
-        # last_heading = ego_hist[:, -1, 3]
-        # heading_rad = torch.deg2rad(last_heading)
-        # dir_x = torch.cos(heading_rad)
-        # dir_y = torch.sin(heading_rad)
-
-        # Calculate vectorized displacements
-        # displacements = speed.view(B, 1) * timesteps
-        # delta_x = displacements * dir_x.view(B, 1)
-        # delta_y = displacements * dir_y.view(B, 1)
+        # Repeat trajectory H times for compatibility with GMM output
+        
+        pred_traj = pred_traj.unsqueeze(3)  # (B, A, T_total, 1, 3)
+        # Step 2: repeat H times along head dim
+        pred_traj = pred_traj.expand(-1, -1, -1, H, -1)  # (B, A, T_total, H, 3)
+        
+        #Sanity check, make sure that the placed traj is the same as the ego agent's
+        _traj = separate_ego_agent(pred_traj, ego_agent_id)
+        _traj = _traj[:, :, :, 0, ].squeeze(1)
+        if not torch.allclose(_traj, ego_traj):        
+            raise ValueError("Ego agent trajectory does not match the expected trajectory.")
+        
         return pred_scores, pred_traj, sigma

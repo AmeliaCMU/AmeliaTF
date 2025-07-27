@@ -32,7 +32,7 @@ def marginal_loss(
         error[torch.tensor]: scalar value representing the marginal loss.
 
     """
-    breakpoint()
+    
     B, A, T, N, D = mu.size()
 
     if not ego_agent is None:
@@ -65,7 +65,6 @@ def marginal_loss(
         mu = mu * mask
         sigma = sigma * mask
         target = target[..., None, :].repeat(1, 1, 1, N, 1) * mask
-
         loss_cls = F.cross_entropy(
             input=pred_scores.flatten(0, 1), target=gt_idx.flatten(), reduction='mean', ignore_index=N)
         loss_reg = F.gaussian_nll_loss(mu, target, sigma)
@@ -91,6 +90,7 @@ def marginal_loss(
         sigma = sigma * mask
         target = target[..., None, :].repeat(1, 1, 1, N, 1) * mask
 
+    
     loss_cls = F.cross_entropy(
         input=pred_scores.flatten(0, 1), target=gt_idx.flatten(), reduction='mean', ignore_index=N)
     loss_reg = F.gaussian_nll_loss(mu, target, sigma)

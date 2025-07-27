@@ -42,14 +42,16 @@ def evaluate(cfg: DictConfig) -> Tuple[dict, dict]:
     Returns:
         Tuple[dict, dict]: Dict with metrics and dict with all instantiated objects.
     """
-    assert cfg.ckpt_path
+    if not cfg.using_model_free and not cfg.ckpt_path:
+        raise ValueError("Checkpoint path must be specified for evaluation.")
 
     log.info(f"Instantiating datamodule <{cfg.data._target_}>")
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
 
     log.info(f"Instantiating model <{cfg.model._target_}>")
     model: LightningModule = hydra.utils.instantiate(cfg.model)
-
+    if cfg.using_model_free:
+        log.info("Using model-free evaluation. Will load LightningModule without model weights.")
     log.info("Instantiating loggers...")
     logger: List[Logger] = utils.instantiate_loggers(cfg.get("logger"))
 

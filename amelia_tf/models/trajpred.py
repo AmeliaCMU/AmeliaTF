@@ -117,7 +117,7 @@ class TrajPred(LightningModule):
         it's worth to make sure validation metrics don't store results from these checks. """
         self.val_loss.reset()
 
-    def model_step(self, batch, plot: bool = False, tag: str = 'temp', out_dir: str = 'temp'):
+    def model_step(self, batch, plot: bool = False, tag: str = 'temp', out_dir: str = 'temp', calc_loss: bool = False):
         """ Runs the model's forward function and then computes the loss function. If plot is True
         it will run and save scene visualizations.
 
@@ -158,10 +158,13 @@ class TrajPred(LightningModule):
             ego_agent=ego_agent
         )
 
-        loss = self.compute_loss(
-            pred_scores, mu, sigma, Y, ego_agent=ego_agent, epoch=self.current_epoch+1,
-            agent_mask=batch['scene_dict']['agent_masks'],
-        )
+        if  calc_loss:
+            loss = self.compute_loss(
+                pred_scores, mu, sigma, Y, ego_agent=ego_agent, epoch=self.current_epoch+1,
+                agent_mask=batch['scene_dict']['agent_masks'],
+            )
+        else:
+            loss = torch.tensor(0.0, device=Y.device)
 
         if plot:
             predictions = (pred_scores, mu, sigma)
