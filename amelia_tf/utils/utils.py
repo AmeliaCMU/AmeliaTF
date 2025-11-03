@@ -7,8 +7,9 @@ import pickle
 import random
 import torch
 import warnings
-
+from matplotlib.offsetbox import AnnotationBbox
 import amelia_scenes.visualization.common as C
+import matplotlib.pyplot as plt
 import amelia_scenes.visualization.marginal_predictions as M
 from amelia_scenes.utils.transform_utils import xy_to_ll
 
@@ -147,7 +148,7 @@ def plot_scene_batch(
     out_dir: str = './out',
     propagation: str = 'marginal',
     dim: int = 2,
-    plot_full_scene=False,
+    plot_full_scene=True,
     k_agents: int = 5,
     plot_n: int = 20
 ) -> None:
@@ -180,8 +181,8 @@ def plot_scene_batch(
             scene['sequences'],    # B, N, T, D=9
             scene['num_agents'],   # B
             scene['ego_agent_id'],  # B
-            scene['agent_types'].numpy().reshape(B, num_agents),  # B
-            scene['agents_in_scene'].numpy().astype(int).reshape(B, k_agents).tolist(),
+            scene['agent_types'].reshape(B, num_agents),  # B
+            scene['agents_in_scene'].reshape(B, k_agents), #.reshape(B, k_agents).tolist(),
             scene['airport_id'],   # B
             scene['scenario_id']   # B
         )
@@ -202,6 +203,9 @@ def plot_scene_batch(
     to_plot = random.sample(range(B), k=min(plot_n, B))
 
     for i, scene in enumerate(zipped):
+        if not i in to_plot:
+            continue
+        
         if plot_full_scene:
             (scores, mu, sigma, sequences, num_agents, ego_id,
              agent_types, agents_in_scene, airport, scenario_id) = scene
@@ -210,9 +214,7 @@ def plot_scene_batch(
             (scores, mu, sigma, sequences,
              num_agents, ego_id, agent_types, airport, scenario_id) = scene
             agents_in_scene = []
-
-        if not i in to_plot:
-            continue
+        
         # TODO: preload these assets in trajpred.py
         if rasters.get(airport) is None:
             im = cv2.imread(os.path.join(asset_dir, airport, 'bkg_map.png'))
@@ -230,7 +232,7 @@ def plot_scene_batch(
         # Read sequences from batch
         gt_abs_traj = sequences[:num_agents]  # N, T, D
         gt_history, gt_future = gt_abs_traj[:, :hist_len, :], gt_abs_traj[:, hist_len:, :]
-        mu, sigma = mu[:num_agents, ..., :dim], sigma[:num_agents, ..., :dim]
+        mu, sigma = mu[:num_agents, ..., :dim].detach(), sigma[:num_agents, ..., :dim].detach()
         
         scores = scores[:num_agents]
 
@@ -241,16 +243,13 @@ def plot_scene_batch(
         start_heading = gt_abs_traj[ego_id, hist_len-1, G.HD].detach().cpu().numpy()
         ref = ref_ll[airport]
         for h in range(H):
-            ll_pred[:, :, h] = xy_to_ll(
-                mu[:, :, h], start_abs, start_heading, ref, geodesic)
+            ll_pred[:, :, h] = xy_to_ll(mu[:, :, h], start_abs, start_heading, ref, geodesic)
 
             mu_p = mu[:, :, h] + torch.sqrt(sigma[:, :, h])
-            sigma_p[:, :, h] = xy_to_ll(
-                mu_p, start_abs, start_heading, ref, geodesic)
+            sigma_p[:, :, h] = xy_to_ll(mu_p, start_abs, start_heading, ref, geodesic)
 
             mu_n = mu[:, :, h] - torch.sqrt(sigma[:, :, h])
-            sigma_n[:, :, h] = xy_to_ll(
-                mu_n, start_abs, start_heading, ref, geodesic)
+            sigma_n[:, :, h] = xy_to_ll(mu_n, start_abs, start_heading, ref, geodesic)
 
         sigma_np = torch.stack((sigma_n, sigma_p), dim=-1)
         tag_i = f"{airport}_scene-{i}_{scenario_id}_{tag}"
@@ -269,3 +268,6 @@ def plot_scene_batch(
             )
         else:
             raise NotImplementedError(f"Propagation: {propagation}")
+
+
+
