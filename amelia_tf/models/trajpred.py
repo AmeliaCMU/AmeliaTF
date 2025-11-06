@@ -171,7 +171,7 @@ class TrajPred(LightningModule):
 
         return loss, pred_scores, mu, sigma, Y[:, :, self.hist_len:]
 
-    def validation_step(self, batch: Any, batch_idx: int):
+    def training_step(self, batch: Any, batch_idx: int):
         """ Performs a model step on a training batch.
 
         Inputs
@@ -183,12 +183,14 @@ class TrajPred(LightningModule):
         ------
             loss[torch.tensor]: model's loss value.
         """
-        loss, _, _, _, _ = self.model_step(batch)
+        # loss, _, _, _, _ = self.model_step(batch)
+        loss, _, _, _, _ = self.model_step(
+            batch, plot=True, tag=f"train-batch-idx{batch_idx}", out_dir=self.val_out_dir)
         self.train_loss(loss)
         self.log("losses/train", self.train_loss, on_step=False, on_epoch=True, prog_bar=True)
         return loss
 
-    def training_step(self, batch: Any, batch_idx: int):
+    def validation_step(self, batch: Any, batch_idx: int):
         """ Performs a model step on a validation batch.
 
         Inputs
