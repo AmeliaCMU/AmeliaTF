@@ -188,7 +188,7 @@ class TrajPred(LightningModule):
         self.log("losses/train", self.train_loss, on_step=False, on_epoch=True, prog_bar=True)
         return loss
 
-    def train_step(self, batch: Any, batch_idx: int):
+    def training_step(self, batch: Any, batch_idx: int):
         """ Performs a model step on a validation batch.
 
         Inputs
