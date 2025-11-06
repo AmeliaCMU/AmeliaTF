@@ -18,10 +18,12 @@ from amelia_tf.utils.utils import separate_ego_agent
 
 np.printoptions(precision=5, suppress=True)
 
+
 class TrajPred(LightningModule):
     """ Trajectory Prediction module wrapper based on:
             https://lightning.ai/docs/pytorch/latest/common/lightning_module.html
     """
+
     def __init__(
         self, optimizer: torch.optim.Optimizer, scheduler: torch.optim.lr_scheduler,
         net: torch.nn.Module, extra_params: EasyDict
@@ -72,8 +74,8 @@ class TrajPred(LightningModule):
             key = f"{airport}_t={pred_len}"
             self.val_seen_ade[key], self.test_seen_ade[key] = MeanMetric(), MeanMetric()
             self.val_seen_fde[key], self.test_seen_fde[key] = MeanMetric(), MeanMetric()
-        self.val_seen_ade  = nn.ModuleDict(self.val_seen_ade)
-        self.val_seen_fde  = nn.ModuleDict(self.val_seen_fde)
+        self.val_seen_ade = nn.ModuleDict(self.val_seen_ade)
+        self.val_seen_fde = nn.ModuleDict(self.val_seen_fde)
         self.test_seen_ade = nn.ModuleDict(self.test_seen_ade)
         self.test_seen_fde = nn.ModuleDict(self.test_seen_fde)
 
@@ -153,7 +155,7 @@ class TrajPred(LightningModule):
         # TODO: address attention-based masking
         pred_scores, mu, sigma = self.net(
             X, context=context, adjacency=adjacency,
-            mask=None, #batch['scene_dict']['agent_masks'] if self.eparams.use_agent_masks else None
+            mask=None,  # batch['scene_dict']['agent_masks'] if self.eparams.use_agent_masks else None
         )
         loss = self.compute_loss(
             pred_scores, mu, sigma, Y, ego_agent=ego_agent, epoch=self.current_epoch+1,
@@ -167,9 +169,9 @@ class TrajPred(LightningModule):
                 out_dir, self.eparams.propagation
             )
 
-        return loss, pred_scores, mu, sigma , Y[:, :, self.hist_len:]
+        return loss, pred_scores, mu, sigma, Y[:, :, self.hist_len:]
 
-    def training_step(self, batch: Any, batch_idx: int):
+    def validation_step(self, batch: Any, batch_idx: int):
         """ Performs a model step on a training batch.
 
         Inputs
@@ -186,7 +188,7 @@ class TrajPred(LightningModule):
         self.log("losses/train", self.train_loss, on_step=False, on_epoch=True, prog_bar=True)
         return loss
 
-    def validation_step(self, batch: Any, batch_idx: int):
+    def train_step(self, batch: Any, batch_idx: int):
         """ Performs a model step on a validation batch.
 
         Inputs
@@ -372,7 +374,7 @@ class TrajPred(LightningModule):
 
         for mn, m in self.named_modules():
             for pn, p in m.named_parameters():
-                fpn = '%s.%s' % (mn, pn) if mn else pn # full param name
+                fpn = '%s.%s' % (mn, pn) if mn else pn  # full param name
                 # random note: because named_modules and named_parameters are recursive
                 # we will see the same tensors p many many times. but doing it this way
                 # allows us to know which parent module any tensor p belongs to...
@@ -427,6 +429,7 @@ class TrajPred(LightningModule):
         return {
             "optimizer": optimizer
         }
+
 
 if __name__ == "__main__":
     _ = TrajPred(None, None, None)
