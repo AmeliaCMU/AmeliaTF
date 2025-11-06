@@ -173,7 +173,7 @@ def plot_scene_batch(
     agents[C.UNKNOWN] = image
 
     if plot_full_scene:
-        num_agents = scene['num_agents'][0]
+        num_agents = scene['num_agents'].max().item()
         zipped = zip(
             pred_scores,           # B, N, H
             mus,                   # B, N, T, H, Dxy
@@ -182,7 +182,7 @@ def plot_scene_batch(
             scene['num_agents'],   # B
             scene['ego_agent_id'],  # B
             scene['agent_types'].reshape(B, num_agents),  # B
-            scene['agents_in_scene'].reshape(B, k_agents), #.reshape(B, k_agents).tolist(),
+            scene['agents_in_scene'].reshape(B, k_agents),  # .reshape(B, k_agents).tolist(),
             scene['airport_id'],   # B
             scene['scenario_id']   # B
         )
@@ -205,7 +205,7 @@ def plot_scene_batch(
     for i, scene in enumerate(zipped):
         if not i in to_plot:
             continue
-        
+
         if plot_full_scene:
             (scores, mu, sigma, sequences, num_agents, ego_id,
              agent_types, agents_in_scene, airport, scenario_id) = scene
@@ -214,7 +214,7 @@ def plot_scene_batch(
             (scores, mu, sigma, sequences,
              num_agents, ego_id, agent_types, airport, scenario_id) = scene
             agents_in_scene = []
-        
+
         # TODO: preload these assets in trajpred.py
         if rasters.get(airport) is None:
             im = cv2.imread(os.path.join(asset_dir, airport, 'bkg_map.png'))
@@ -233,7 +233,7 @@ def plot_scene_batch(
         gt_abs_traj = sequences[:num_agents]  # N, T, D
         gt_history, gt_future = gt_abs_traj[:, :hist_len, :], gt_abs_traj[:, hist_len:, :]
         mu, sigma = mu[:num_agents, ..., :dim].detach(), sigma[:num_agents, ..., :dim].detach()
-        
+
         scores = scores[:num_agents]
 
         # Transform relative XY prediction to absolute LL space
@@ -268,6 +268,3 @@ def plot_scene_batch(
             )
         else:
             raise NotImplementedError(f"Propagation: {propagation}")
-
-
-
