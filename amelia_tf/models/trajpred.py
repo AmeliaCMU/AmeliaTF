@@ -184,6 +184,7 @@ class TrajPred(LightningModule):
             loss[torch.tensor]: model's loss value.
         """
         # loss, _, _, _, _ = self.model_step(batch)
+        print(f"train-batch-idx{batch_idx}")
         loss, _, _, _, _ = self.model_step(
             batch, plot=True, tag=f"train-batch-idx{batch_idx}", out_dir=self.val_out_dir)
         self.train_loss(loss)
