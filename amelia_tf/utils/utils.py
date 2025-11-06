@@ -175,7 +175,7 @@ def plot_scene_batch(
     if plot_full_scene:
         tag_i = f"_scene-_{scene['scenario_id']}_{tag}"
         print(f"Plotting scene {tag_i}")
-        print(scene['agent_types'].shape, scene['num_agents'][0])
+        print(scene['agent_types'].shape, scene['num_agents'])
         num_agents = scene['num_agents'][0]
         zipped = zip(
             pred_scores,           # B, N, H
