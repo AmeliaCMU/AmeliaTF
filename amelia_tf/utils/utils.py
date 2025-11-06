@@ -173,6 +173,9 @@ def plot_scene_batch(
     agents[C.UNKNOWN] = image
 
     if plot_full_scene:
+        tag_i = f"{airport}_scene-_{scene['scenario_id']}_{tag}"
+        print(f"Plotting scene {tag_i}")
+        print(scene['agent_types'].shape, num_agents)
         num_agents = scene['num_agents'][0]
         zipped = zip(
             pred_scores,           # B, N, H
@@ -203,7 +206,6 @@ def plot_scene_batch(
     to_plot = random.sample(range(B), k=min(plot_n, B))
 
     for i, scene in enumerate(zipped):
-        print(f"Plotting scene {i} / {B}")
         if not i in to_plot:
             continue
 
@@ -254,6 +256,7 @@ def plot_scene_batch(
 
         sigma_np = torch.stack((sigma_n, sigma_p), dim=-1)
         tag_i = f"{airport}_scene-{i}_{scenario_id}_{tag}"
+        print(f"Plotting scene {tag_i}")
 
         if propagation == 'marginal':
             M.plot_scene_marginal_fast(
