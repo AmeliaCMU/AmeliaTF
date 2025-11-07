@@ -11,8 +11,8 @@ extra_params:
   propagation: 'marginal'
 
   tag: 'marginal_${data.extra_params.data_prep.exp_suffix}_${data.dataset.config.sampling_strategy}'
-  
-  plot_val: True
+
+  plot_val: False
   plot_test: True
   plot_every_n: 100
   plot_after_n_epochs: 0
