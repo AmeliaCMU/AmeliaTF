@@ -1,4 +1,8 @@
-# AmeliaTF
+# ![WIP](https://img.shields.io/badge/status-WIP-orange) AmeliaTF
+
+> **Note:** This repo is undergoing updates. Currently, stable experiments can be run using a multi-GPU setting. (See trainer options in the configuration folders).
+
+> **Note:** To run evaluations on the currently released checkpoints, please use **main_src**.
 
 This repository contains the model implementation, as well as the training and evaluation code of our paper:
 
@@ -105,15 +109,15 @@ python src/eval.py data=seen-all model=marginal trainer=gpu ckpt_path=/path/to/p
 
 We provide the configuration combination to run our experiments, as well as our pre-trained weights.
 
-#### Single-Airport Experiments (Table 5 in our paper)
+#### Single-Airport Experiments (Table 3 and 4 in our paper)
 
 The model configuration used for all of these experiments was `marginal.yaml`.
 
 | Airport                                   | Airport ICAO | Data Config | ADE@20 | FDE@20 | ADE@50 | FDE@50 | Weights  |
 |:-----------------------------------------:|:------------:|:-----------:|:------:| :----: | :----: | :----: | :------: |
 | Ted Stevens Anchorage Intl. Airport       |      PANC    | `panc.yaml` | 10.11  | 20.87  | 38.84  | 101.89 | [panc](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/panc.zip) |
-| Boston-Logan Intl. Airport                |      KBOS    | `kbos.yaml` |  5.58  | 10.90  | 21.34  |  53.76 | [kbos](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kbos.zip) |
-| Ronald Reagan Washington Natl. Airport    |      KDCA    | `kdca.yaml` |  4.74  |  9.22  | 16.42  |  40.57 | [kdca](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kdca.zip) |
+| Boston-Logan Intl. Airport                |      KBOS    | `kbos.yaml` |  5.58  | 10.90  | 21.34  |  53.76 | [kbos](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kbos/checkpoints) |
+| Ronald Reagan Washington Natl. Airport    |      KDCA    | `kdca.yaml` |  4.74  |  9.22  | 16.42  |  40.57 | [kdca](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kdca/checkpoints) |
 | Newark Liberty Intl. Airport              |      KEWR    | `kewr.yaml` |  6.61  | 12.92  | 23.68  |  57.63 | [kewr](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kewr.zip) |
 | John F. Kennedy Intl. Airport             |      KJFK    | `kjfk.yaml` |  4.58  |  9.52  | 17.11  |  41.19 | [kjfk](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kjfk.zip) |
 | Los Angeles Intl. Airport                 |      KLAX    | `klax.yaml` | 11.36  | 20.63  | 36.08  |  88.25 | [klax](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/klax.zip) |
@@ -124,18 +128,18 @@ The model configuration used for all of these experiments was `marginal.yaml`.
 
 <hr>
 
-#### Multi-Airport Experiments (Table 6 and 8 in our paper)
+#### Multi-Airport Experiments (Table 3 and 4 in our paper)
 
 The model configuration used for all of these experiments was also `marginal.yaml`.
 
 | Seen Airport(s)                                            | Unseen Airport(s)                                    | Data Config     | Avg. ADE@20 | Avg. FDE@20 | Avg. ADE@50 | Avg. FDE@50 | Weights |
 | :--------------------------------------------------------: | :--------------------------------------------------: | :-------------: | :---------: | :---------: | :---------: | :---------: | :-----: |
-| KMDW                                                       | KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-1.yaml`   |     3.30    |     6.12    |    11.50    |    28.80    | [seen-1](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-1.zip) |
-| KMDW, KEWR                                                 | KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY       | `seen-2.yaml`   |     3.31    |     6.23    |    11.84    |    28.89    | [seen-2](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-2.zip) |
-| KMDW, KEWR, KBOS                                           | KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY             | `seen-3.yaml`   |     3.26    |     6.59    |    12.46    |    31.81    | [seen-3](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-3.zip) |
-| KMDW, KEWR, KBOS, KSFO                                     | KSEA, KDCA, PANC, KLAX, KJFK, KMSY                   | `seen-4.yaml`   |     3.52    |     6.74    |    12.71    |    31.64    | [seen-4](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-4.zip) |
-| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC                   | KLAX, KJFK, KMSY                                     | `seen-7.yaml`   |     3.59    |     7.03    |    14.35    |    38.62    | [seen-7](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-7.zip) |
-| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | -                                                    | `seen-all.yaml` |     3.88    |     7.70    |    15.30    |    40.91    | [seen-all](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-all.zip) |
+| KMDW                                                       | KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | `seen-1.yaml`   |    10.52    |    23.26    |    42.44    |   107.75    | [seen-1](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-1.zip) |
+| KMDW, KEWR                                                 | KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY       | `seen-2.yaml`   |     7.56    |    15.99    |    29.94    |    74.67    | [seen-2](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-2.zip) |
+| KMDW, KEWR, KBOS                                           | KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY             | `seen-3.yaml`   |     6.97    |    14.40    |    26.59    |    63.70    | [seen-3](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-3.zip) |
+| KMDW, KEWR, KBOS, KSFO                                     | KSEA, KDCA, PANC, KLAX, KJFK, KMSY                   | `seen-4.yaml`   |     6.74    |    13.74    |    24.58    |    58.43    | [seen-4](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-4.zip) |
+| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC                   | KLAX, KJFK, KMSY                                     | `seen-7.yaml`   |     6.28    |    12.64    |    23.38    |    58.26    | [seen-7](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-7.zip) |
+| KMDW, KEWR, KBOS, KSFO, KSEA, KDCA, PANC, KLAX, KJFK, KMSY | -                                                    | `seen-all.yaml` |     6.34    |    12.77    |    23.27    |    57.16    | [seen-all](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Muti-Airport/seen-all.zip) |
 
 <hr>
 
