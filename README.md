@@ -116,8 +116,8 @@ The model configuration used for all of these experiments was `marginal.yaml`.
 | Airport                                   | Airport ICAO | Data Config | ADE@20 | FDE@20 | ADE@50 | FDE@50 | Weights  |
 |:-----------------------------------------:|:------------:|:-----------:|:------:| :----: | :----: | :----: | :------: |
 | Ted Stevens Anchorage Intl. Airport       |      PANC    | `panc.yaml` | 10.11  | 20.87  | 38.84  | 101.89 | [panc](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/panc.zip) |
-| Boston-Logan Intl. Airport                |      KBOS    | `kbos.yaml` |  5.58  | 10.90  | 21.34  |  53.76 | [kbos](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kbos/checkpoints) |
-| Ronald Reagan Washington Natl. Airport    |      KDCA    | `kdca.yaml` |  4.74  |  9.22  | 16.42  |  40.57 | [kdca](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kdca/checkpoints) |
+| Boston-Logan Intl. Airport                |      KBOS    | `kbos.yaml` |  4.97  |  9.49  | 18.01  |  40.14 | [kbos](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kbos/checkpoints) |
+| Ronald Reagan Washington Natl. Airport    |      KDCA    | `kdca.yaml` |  5.07  |  9.76  | 16.58  |  40.14 | [kdca](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kdca/checkpoints) |
 | Newark Liberty Intl. Airport              |      KEWR    | `kewr.yaml` |  6.61  | 12.92  | 23.68  |  57.63 | [kewr](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kewr.zip) |
 | John F. Kennedy Intl. Airport             |      KJFK    | `kjfk.yaml` |  4.58  |  9.52  | 17.11  |  41.19 | [kjfk](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kjfk.zip) |
 | Los Angeles Intl. Airport                 |      KLAX    | `klax.yaml` | 11.36  | 20.63  | 36.08  |  88.25 | [klax](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/klax.zip) |
