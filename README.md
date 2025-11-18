@@ -119,10 +119,10 @@ The model configuration used for all of these experiments was `marginal.yaml`.
 | Boston-Logan Intl. Airport                |      KBOS    | `kbos.yaml` |  4.97  |  9.49  | 18.01  |  40.14 | [kbos](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kbos/checkpoints) |
 | Ronald Reagan Washington Natl. Airport    |      KDCA    | `kdca.yaml` |  5.07  |  9.76  | 16.58  |  40.14 | [kdca](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kdca/checkpoints) |
 | Newark Liberty Intl. Airport              |      KEWR    | `kewr.yaml` |  5.91  | 11.41  | 21.05  |  52.40 | [kewr](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kewr/checkpoints) |
-| John F. Kennedy Intl. Airport             |      KJFK    | `kjfk.yaml` |  4.58  |  9.52  | 17.11  |  41.19 | [kjfk](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kjfk.zip) |
-| Los Angeles Intl. Airport                 |      KLAX    | `klax.yaml` | 9.84  | 19.97  | 35.97  |  89.92 | [klax](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/klax/checkpoints) |
+| John F. Kennedy Intl. Airport             |      KJFK    | `kjfk.yaml` |  6.18  |  12.25  | 22.58  |  55.51 | [kjfk](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kjfk/checkpoints) |
+| Los Angeles Intl. Airport                 |      KLAX    | `klax.yaml` |  9.84  | 19.97  | 35.97  |  89.92 | [klax](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/klax/checkpoints) |
 | Chicago-Midway Intl. Airport              |      KMDW    | `kmdw.yaml` |  3.30  |  6.12  | 11.50  |  28.80 | [kmdw](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kmdw/checkpoints) |
-| Louis Armstrong New Orleans Intl. Airport |      KMSY    | `kmsy.yaml` |  2.73  |  5.12  |  9.89  |  25.68 | [kmsy](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/kmsy.zip) |
+| Louis Armstrong New Orleans Intl. Airport |      KMSY    | `kmsy.yaml` |  3.35  |  6.37  |  12.36  |  32.27 | [kmsy](https://huggingface.co/AmeliaCMU/AmeliaTF-weights-only/tree/main/weights/Single-Airport/kmsy/checkpoints) |
 | Seattle-Tacoma Intl. Airport              |      KSEA    | `ksea.yaml` |  9.76  | 18.35  | 29.94  |  65.82 | [ksea](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/ksea.zip) |
 | San Francisco Intl. Airport               |      KSFO    | `ksfo.yaml` |  5.06  |  9.82  | 17.05  |  40.23 | [ksfo](https://airlab-share-01.andrew.cmu.edu:9000/amelia-processed/Single-Airport/ksfo.zip) |
 
